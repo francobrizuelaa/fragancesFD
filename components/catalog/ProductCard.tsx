@@ -56,36 +56,37 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="relative aspect-[3/4] w-full bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900">
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 p-4 text-center">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+    <article className="group flex flex-col overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-[0_10px_30px_-20px_rgba(0,0,0,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.55)]">
+      <div className="relative aspect-[3/4] w-full bg-gradient-to-br from-[#f5f0e7] via-[#f9f6f1] to-[#ece3d6]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.55),_transparent_45%)]" />
+        <div className="relative flex h-full w-full flex-col items-center justify-center gap-1 p-4 text-center">
+          <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500">
             {product.brand}
           </span>
-          <span className="line-clamp-2 text-sm font-semibold text-zinc-700 dark:text-zinc-200">
+          <span className="line-clamp-2 text-base font-semibold text-zinc-700">
             {product.name}
           </span>
-          <span className="mt-2 rounded-full bg-zinc-300/80 px-2 py-0.5 text-[10px] text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300">
+          <span className="mt-2 rounded-full border border-zinc-300/70 bg-white/60 px-2 py-0.5 text-[10px] text-zinc-600">
             Imagen próximamente
           </span>
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-4 p-5">
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">
             {product.brand}
           </p>
-          <h3 className="mt-0.5 line-clamp-2 text-base font-semibold leading-snug text-zinc-900 dark:text-zinc-50">
+          <h3 className="mt-1 line-clamp-2 text-lg font-semibold leading-snug text-primary">
             {product.name}
           </h3>
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-zinc-500">
             Formato
           </p>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-2">
             {product.sizes.map((size) => {
               const active = size.id === selected?.id;
               return (
@@ -93,14 +94,14 @@ export function ProductCard({ product }: ProductCardProps) {
                   key={size.id}
                   type="button"
                   onClick={() => setSelectedId(size.id)}
-                  className={`flex w-full items-center justify-between rounded-xl border px-3 py-2.5 text-left text-sm transition-colors ${
+                  className={`flex w-full items-center justify-between rounded-2xl border px-3 py-2.5 text-left text-sm transition-colors ${
                     active
-                      ? 'border-emerald-600 bg-emerald-50 text-emerald-950 dark:border-emerald-500 dark:bg-emerald-950/40 dark:text-emerald-100'
-                      : 'border-zinc-200 bg-zinc-50 hover:border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900/50 dark:hover:border-zinc-600'
+                      ? 'border-accent-wine bg-accent-wine text-white'
+                      : 'border-zinc-200 bg-zinc-50/60 hover:border-accent-wine/50'
                   }`}
                 >
                   <span className="font-medium">{size.label}</span>
-                  <span className="tabular-nums text-zinc-700 dark:text-zinc-200">
+                  <span className={`tabular-nums ${active ? '' : 'text-zinc-700'}`}>
                     {formatPrice(size.price)}
                   </span>
                 </button>
@@ -113,7 +114,7 @@ export function ProductCard({ product }: ProductCardProps) {
           type="button"
           onClick={handleAdd}
           disabled={!selected}
-          className="mt-auto w-full rounded-xl bg-zinc-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-emerald-600 dark:hover:bg-emerald-500"
+          className="mt-auto w-full rounded-2xl border border-accent-wine bg-accent-wine py-3 text-sm font-semibold tracking-wide text-white transition-colors hover:bg-[#4d1822] disabled:cursor-not-allowed disabled:opacity-50"
         >
           Agregar al carrito
         </button>

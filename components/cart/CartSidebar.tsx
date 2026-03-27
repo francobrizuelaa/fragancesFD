@@ -54,16 +54,16 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
   ]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-950 lg:rounded-2xl lg:border">
-      <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+    <div className="flex h-full min-h-0 flex-col border-zinc-200 bg-white shadow-xl lg:rounded-2xl lg:border">
+      <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3">
+        <h2 className="text-lg font-semibold text-primary">
           Carrito
         </h2>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
             aria-label="Cerrar carrito"
           >
             <svg
@@ -86,7 +86,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
         {comboTier === 'tier1' && (
-          <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950 dark:border-amber-900/60 dark:bg-amber-950/50 dark:text-amber-100">
+          <div className="mb-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm text-zinc-900">
             <p className="font-semibold">Nivel 1 — Regalo activo</p>
             <p className="mt-0.5 text-xs opacity-90">
               Incluye 1 decant sorpresa de regalo en tu pedido.
@@ -95,7 +95,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
         )}
 
         {comboTier === 'tier2' && (
-          <div className="mb-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-950 dark:border-emerald-900/60 dark:bg-emerald-950/50 dark:text-emerald-100">
+          <div className="mb-3 rounded-xl border border-accent-wine/30 bg-accent-wine/5 px-3 py-2 text-sm text-accent-wine">
             <p className="font-semibold">Nivel 2 — Combo activo</p>
             <p className="mt-0.5 text-xs opacity-90">
               Cada 5 unidades, el ítem de menor valor del grupo queda bonificado
@@ -105,7 +105,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
         )}
 
         {items.length === 0 ? (
-          <p className="py-8 text-center text-sm text-zinc-500 dark:text-zinc-400">
+          <p className="py-8 text-center text-sm text-zinc-500">
             Tu carrito está vacío. Agregá perfumes desde el catálogo.
           </p>
         ) : (
@@ -121,21 +121,21 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
               return (
                 <li
                   key={item.cartItemId}
-                  className="rounded-xl border border-zinc-100 bg-zinc-50/80 p-3 dark:border-zinc-800 dark:bg-zinc-900/40"
+                  className="rounded-xl border border-zinc-100 bg-zinc-50/80 p-3"
                 >
                   <div className="flex gap-2">
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                      <p className="text-xs text-zinc-500">
                         {item.brandName}
                       </p>
-                      <p className="truncate font-medium text-zinc-900 dark:text-zinc-50">
+                      <p className="truncate font-medium text-zinc-900">
                         {item.productName}
-                        <span className="font-normal text-zinc-600 dark:text-zinc-400">
+                        <span className="font-normal text-zinc-600">
                           {size}
                         </span>
                       </p>
                       {bonified && (
-                        <span className="mt-1 inline-block rounded-md bg-emerald-600/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-300">
+                        <span className="mt-1 inline-block rounded-md bg-accent-wine/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-wine">
                           Bonificado
                         </span>
                       )}
@@ -146,12 +146,12 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
                           <p className="text-xs text-zinc-400 line-through">
                             {formatMoney(lineFull)}
                           </p>
-                          <p className="font-semibold tabular-nums text-emerald-700 dark:text-emerald-400">
+                          <p className="font-semibold tabular-nums text-accent-wine">
                             {formatMoney(0)}
                           </p>
                         </div>
                       ) : (
-                        <p className="font-semibold tabular-nums text-zinc-900 dark:text-zinc-50">
+                        <p className="font-semibold tabular-nums text-zinc-900">
                           {formatMoney(lineDisplay)}
                         </p>
                       )}
@@ -159,10 +159,10 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
                   </div>
 
                   <div className="mt-2 flex items-center justify-between gap-2">
-                    <div className="flex items-center rounded-lg border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-950">
+                    <div className="flex items-center rounded-lg border border-zinc-200 bg-white">
                       <button
                         type="button"
-                        className="px-2.5 py-1 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        className="px-2.5 py-1 text-sm hover:bg-zinc-100"
                         onClick={() =>
                           updateQuantity(item.cartItemId, item.quantity - 1)
                         }
@@ -174,7 +174,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
                       </span>
                       <button
                         type="button"
-                        className="px-2.5 py-1 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        className="px-2.5 py-1 text-sm hover:bg-zinc-100"
                         onClick={() =>
                           updateQuantity(item.cartItemId, item.quantity + 1)
                         }
@@ -184,7 +184,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
                     </div>
                     <button
                       type="button"
-                      className="text-xs font-medium text-red-600 hover:underline dark:text-red-400"
+                      className="text-xs font-medium text-accent-wine hover:underline"
                       onClick={() => removeItem(item.cartItemId)}
                     >
                       Quitar
@@ -197,23 +197,23 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
         )}
       </div>
 
-      <div className="border-t border-zinc-200 bg-zinc-50/90 px-4 py-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+      <div className="border-t border-zinc-200 bg-zinc-50/90 px-4 py-4">
         <dl className="space-y-1.5 text-sm">
-          <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+          <div className="flex justify-between text-zinc-600">
             <dt>Subtotal</dt>
-            <dd className="tabular-nums text-zinc-900 dark:text-zinc-100">
+            <dd className="tabular-nums text-zinc-900">
               {formatMoney(subtotal)}
             </dd>
           </div>
           {totalSavings > 0 && (
-            <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
+            <div className="flex justify-between text-accent-wine">
               <dt>Descuentos (combos)</dt>
               <dd className="tabular-nums">−{formatMoney(totalSavings)}</dd>
             </div>
           )}
-          <div className="flex justify-between border-t border-zinc-200 pt-2 text-base font-semibold dark:border-zinc-700">
-            <dt className="text-zinc-900 dark:text-zinc-50">Total</dt>
-            <dd className="tabular-nums text-zinc-900 dark:text-zinc-50">
+          <div className="flex justify-between border-t border-zinc-200 pt-2 text-base font-semibold">
+            <dt className="text-zinc-900">Total</dt>
+            <dd className="tabular-nums text-zinc-900">
               {formatMoney(total)}
             </dd>
           </div>
@@ -225,7 +225,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
           rel="noopener noreferrer"
           className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-colors ${
             checkoutUrl
-              ? 'bg-emerald-600 hover:bg-emerald-500'
+              ? 'bg-accent-wine hover:bg-[#4d1822]'
               : 'cursor-not-allowed bg-zinc-400'
           }`}
           aria-disabled={!checkoutUrl}
@@ -246,10 +246,10 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
         {!whatsappConfigured && (
           <p className="mt-2 text-center text-[11px] text-zinc-500">
             Definí{' '}
-            <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">
+            <code className="rounded bg-zinc-200 px-1">
               NEXT_PUBLIC_WHATSAPP_NUMBER
             </code>{' '}
-            en <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">.env.local</code>{' '}
+            en <code className="rounded bg-zinc-200 px-1">.env.local</code>{' '}
             para habilitar el enlace.
           </p>
         )}

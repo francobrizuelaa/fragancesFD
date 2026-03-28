@@ -1,6 +1,5 @@
 import Link from 'next/link';
-import { ProductCard } from '@/components/catalog/ProductCard';
-import { MOCK_PRODUCTS } from '@/lib/mockProducts';
+import { HomeProductCarousels } from '@/components/home/HomeProductCarousels';
 
 const comboCards = [
   {
@@ -18,9 +17,6 @@ const comboCards = [
 ];
 
 export default function Home() {
-  const destacados = MOCK_PRODUCTS;
-  const promociones = [...MOCK_PRODUCTS].reverse();
-
   return (
     <div className="bg-cream">
       <section className="border-b border-zinc-200/70">
@@ -104,35 +100,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 pb-8">
-        <div className="mb-6 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold tracking-tight text-primary">
-            Nuestros Destacados
-          </h2>
-        </div>
-        <div className="flex snap-x gap-5 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
-          {destacados.map((product) => (
-            <div key={`destacado-${product.id}`} className="min-w-[270px] max-w-[290px] snap-start lg:min-w-0 lg:max-w-none">
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
-        <div className="mb-6 flex items-end justify-between">
-          <h2 className="text-2xl font-semibold tracking-tight text-primary">
-            Promociones
-          </h2>
-        </div>
-        <div className="flex snap-x gap-5 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0">
-          {promociones.map((product) => (
-            <div key={`promo-${product.id}`} className="min-w-[270px] max-w-[290px] snap-start lg:min-w-0 lg:max-w-none">
-              <ProductCard product={product} />
-            </div>
-          ))}
-        </div>
-      </section>
+      <HomeProductCarousels />
     </div>
   );
 }

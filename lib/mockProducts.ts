@@ -68,3 +68,20 @@ export const MOCK_PRODUCTS: ProductCardProduct[] = [
     ],
   },
 ];
+
+export function getProductBySlug(
+  slug: string
+): ProductCardProduct | undefined {
+  return MOCK_PRODUCTS.find((p) => p.slug === slug);
+}
+
+export function minProductPrice(product: ProductCardProduct): number {
+  return Math.min(...product.sizes.map((s) => s.price));
+}
+
+export function productHasVolumeMl(
+  product: ProductCardProduct,
+  ml: number
+): boolean {
+  return product.sizes.some((s) => s.volume_ml === ml);
+}

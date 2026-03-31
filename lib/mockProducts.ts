@@ -17,6 +17,7 @@ export const MOCK_PRODUCTS: ProductCardProduct[] = [
     name: 'Sauvage EDT',
     brand: 'Dior',
     slug: 'dior-sauvage-edt',
+    image: '/sauvage.png',
     sizes: [
       { id: 'full', label: 'Frasco entero', price: 195_000, isDecant: false },
       { id: 'd10', label: 'Decant 10ml', price: 14_500, isDecant: true, volume_ml: 10 },

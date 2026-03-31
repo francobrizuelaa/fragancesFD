@@ -18,7 +18,7 @@ export function HomeProductCarousels() {
 
   return (
     <>
-      <section className="mx-auto max-w-7xl px-4 pb-10">
+      <section className="mx-auto w-full max-w-[1400px] px-4 pb-10 md:px-12">
         <h2 className="mb-2 text-2xl font-semibold tracking-tight text-primary">
           Nuestros Destacados
         </h2>
@@ -31,7 +31,7 @@ export function HomeProductCarousels() {
         />
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-10 sm:py-14">
+      <section className="mx-auto w-full max-w-[1400px] px-4 py-10 sm:py-14 md:px-12">
         <h2 className="mb-2 text-2xl font-semibold tracking-tight text-primary">
           Promociones
         </h2>

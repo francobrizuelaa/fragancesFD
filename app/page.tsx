@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image'; // <-- ¡Importante agregar esto!
 import { HomeProductCarousels } from '@/components/home/HomeProductCarousels';
 
 const comboCards = [
@@ -43,17 +44,45 @@ export default function Home() {
             </div>
           </div>
 
+          {/* ACÁ EMPIEZA LA MAGIA DE LAS IMÁGENES REALES */}
           <div className="relative mx-auto h-[380px] w-full max-w-[440px]">
-            <div className="absolute left-0 top-10 h-[280px] w-[210px] rounded-[2rem] border border-zinc-200 bg-gradient-to-b from-zinc-100 to-zinc-200 shadow-[0_16px_36px_-22px_rgba(0,0,0,0.45)]" />
-            <div className="absolute right-4 top-0 h-[320px] w-[230px] rounded-[2rem] border border-zinc-200 bg-gradient-to-b from-zinc-50 to-zinc-300 shadow-[0_24px_40px_-22px_rgba(0,0,0,0.5)]" />
-            <div className="absolute left-12 top-32 h-[280px] w-[220px] rounded-[2rem] border border-zinc-200 bg-white/60 p-4 backdrop-blur-[2px]">
-              <div className="flex h-full items-end justify-center rounded-[1.4rem] border border-zinc-200 bg-[linear-gradient(180deg,#ece7de_0%,#ffffff_100%)]">
-                <span className="mb-5 text-[10px] uppercase tracking-[0.2em] text-zinc-500">
-                  Decant Bottle
-                </span>
-              </div>
+            
+            {/* Imagen de fondo izquierda */}
+            <div className="absolute left-0 top-10 h-[280px] w-[210px] overflow-hidden rounded-[2rem] shadow-[0_16px_36px_-22px_rgba(0,0,0,0.45)]">
+              <Image 
+                src="/decant-1.png" 
+                alt="Decant de perfume 1" 
+                fill 
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover transition-transform duration-700 hover:scale-105" 
+              />
             </div>
+
+            {/* Imagen de fondo derecha */}
+            <div className="absolute right-4 top-0 h-[320px] w-[230px] overflow-hidden rounded-[2rem] shadow-[0_24px_40px_-22px_rgba(0,0,0,0.5)]">
+              <Image 
+                src="/decant-1.png" 
+                alt="Decant de perfume 2" 
+                fill 
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover transition-transform duration-700 hover:scale-105" 
+              />
+            </div>
+
+            {/* Imagen principal al frente */}
+            <div className="absolute left-12 top-32 h-[280px] w-[220px] overflow-hidden rounded-[2rem] border-[6px] border-[#fdfbf7] shadow-2xl">
+              <Image 
+                src="/decant-1.png" 
+                alt="Decant de perfume principal" 
+                fill 
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover transition-transform duration-700 hover:scale-105" 
+              />
+            </div>
+            
           </div>
+          {/* ACÁ TERMINA */}
+
         </div>
       </section>
 

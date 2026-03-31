@@ -12,6 +12,7 @@ export interface ProductCardProduct {
   name: string;
   brand: string;
   slug: string;
+  image?: string;
   sizes: ProductSizeOption[];
 }
 

@@ -1,23 +1,14 @@
 import Link from 'next/link';
-import Image from 'next/image'; // <-- ¡Importante agregar esto!
+import Image from 'next/image';
 import { HomeProductCarousels } from '@/components/home/HomeProductCarousels';
+import type { ProductCardProduct } from '@/components/catalog/ProductCard';
+import { getProducts } from '@/lib/products';
 
-const comboCards = [
-  {
-    tier: 'Nivel 1',
-    title: 'Regalo con 3',
-    description:
-      'Llevando 3 unidades, sumamos un decant sorpresa de regalo a tu pedido.',
-  },
-  {
-    tier: 'Nivel 2',
-    title: 'Más barato a $0 llevando 5',
-    description:
-      'En cada grupo de 5 unidades, el producto de menor precio se bonifica automáticamente.',
-  },
-];
+export const revalidate = 60;
 
-export default function Home() {
+export default async function Home() {
+  const products: ProductCardProduct[] = await getProducts().catch(() => []);
+
   return (
     <div className="bg-cream">
       <section className="border-b border-zinc-200/70">
@@ -86,50 +77,21 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:py-20">
-        <div className="mb-8">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent-wine">
-            Combos inteligentes
+      <section
+        className="mb-24 w-full bg-gradient-to-br from-[#2a0e14] via-[#3d1520] to-[#4d1822] py-24 text-cream sm:mb-32 sm:py-32"
+        aria-label="Promoción"
+      >
+        <div className="mx-auto w-full max-w-4xl px-4 text-center">
+          <p className="mb-4 font-serif text-3xl italic leading-snug text-[#e8e3d9] md:mb-6 md:text-5xl md:leading-tight">
+            ¡Decant de regalo llevando 3 productos!
           </p>
-          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-primary">
-            Beneficios automáticos en tu carrito
-          </h2>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-2">
-          {comboCards.map((card) => (
-            <article
-              key={card.tier}
-              className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-[0_12px_26px_-22px_rgba(0,0,0,0.55)]"
-            >
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 text-accent-wine">
-                  {card.tier === 'Nivel 1' ? (
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M12 3v18M3 12h18" />
-                    </svg>
-                  ) : (
-                    <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="m4 12 5 5L20 6" />
-                    </svg>
-                  )}
-                </span>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-accent-wine">
-                  {card.tier}
-                </p>
-              </div>
-              <h3 className="mt-4 text-xl font-semibold text-primary">
-                {card.title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-                {card.description}
-              </p>
-            </article>
-          ))}
+          <p className="font-sans text-sm font-light uppercase tracking-widest text-white/80 md:text-base">
+            ¡Perfume de regalo llevando 5!
+          </p>
         </div>
       </section>
 
-      <HomeProductCarousels />
+      <HomeProductCarousels products={products} />
     </div>
   );
 }

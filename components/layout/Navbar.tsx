@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { ChevronDown, Search } from 'lucide-react';
+import { Suspense, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { CartSidebar } from '@/components/cart/CartSidebar';
 import { useCart } from '@/hooks/useCart';
+import { NavbarSearch } from '@/components/layout/NavbarSearch';
 
 function NavLink({ href, label }: { href: string; label: string }) {
   const pathname = usePathname();
@@ -38,11 +39,10 @@ export function Navbar() {
             <Image
               src="/logo.png"
               alt="fragances FD"
-              width={132}
-              height={36}
+              width={150}
+              height={45}
               priority
-              style={{ width: 'auto', height: 'auto' }}
-              className="h-9 w-auto object-contain"
+              className="h-auto w-auto max-h-[45px] w-auto object-contain"
             />
             <span className="sr-only">fragances FD</span>
           </Link>
@@ -58,44 +58,41 @@ export function Navbar() {
                 <ChevronDown className="h-4 w-4" aria-hidden />
               </Link>
               <div className="pointer-events-none absolute left-0 top-full z-50 pt-2 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
-                <div className="w-[360px] rounded-2xl border border-zinc-200 bg-cream p-5 shadow-xl">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div>
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent-wine">
+                <div className="min-w-[280px] rounded-2xl border border-zinc-200 bg-cream p-4 shadow-xl">
+                  <ul className="flex flex-col gap-2">
+                    <li>
+                      <Link
+                        href="/catalogo?type=designer"
+                        className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
+                      >
                         Perfumes de Diseñador
-                      </p>
-                      <ul className="space-y-2 text-sm text-zinc-700">
-                        <li><Link href="#" className="hover:text-accent-wine">Dior</Link></li>
-                        <li><Link href="#" className="hover:text-accent-wine">Chanel</Link></li>
-                        <li><Link href="#" className="hover:text-accent-wine">YSL</Link></li>
-                      </ul>
-                    </div>
-                    <div>
-                      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-accent-wine">
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/catalogo?type=arab"
+                        className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
+                      >
                         Perfumes Árabes
-                      </p>
-                      <ul className="space-y-2 text-sm text-zinc-700">
-                        <li><Link href="#" className="hover:text-accent-wine">Lattafa</Link></li>
-                        <li><Link href="#" className="hover:text-accent-wine">Afnan</Link></li>
-                        <li><Link href="#" className="hover:text-accent-wine">Armaf</Link></li>
-                      </ul>
-                    </div>
-                  </div>
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="relative hidden md:block">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" aria-hidden />
-              <input
-                type="search"
-                placeholder="Buscar"
-                className="h-10 w-44 rounded-full border border-zinc-200 bg-zinc-100/70 pl-9 pr-3 text-sm text-zinc-800 outline-none transition focus:border-zinc-300 focus:bg-white"
-                aria-label="Buscar perfumes"
-              />
-            </label>
+            <Suspense
+              fallback={
+                <div
+                  className="hidden h-10 min-w-[280px] max-w-sm animate-pulse rounded-full border border-zinc-200 bg-zinc-100/70 md:block"
+                  aria-hidden
+                />
+              }
+            >
+              <NavbarSearch />
+            </Suspense>
 
             <button
               type="button"

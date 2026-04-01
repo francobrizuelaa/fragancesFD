@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
-import { MOCK_PRODUCTS, getProductBySlug } from '@/lib/mockProducts';
+import { getProductBySlug, getProducts } from '@/lib/products';
 import { ProductDetailClient } from './product-detail-client';
 
-export function generateStaticParams() {
-  return MOCK_PRODUCTS.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  const products = await getProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export default async function ProductoPage({
@@ -12,7 +13,7 @@ export default async function ProductoPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   return <ProductDetailClient product={product} />;

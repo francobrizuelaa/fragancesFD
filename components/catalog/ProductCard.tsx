@@ -13,6 +13,8 @@ export interface ProductCardProduct {
   brand: string;
   slug: string;
   image?: string;
+  /** Categoría de catálogo: diseñador vs árabe (filtro `?type=`). */
+  type: 'designer' | 'arab';
   sizes: ProductSizeOption[];
 }
 

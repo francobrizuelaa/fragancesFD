@@ -2,11 +2,15 @@
 
 import { Carousel3D } from '@/components/ui/3DCarousel';
 import { CarouselProductCard } from '@/components/catalog/CarouselProductCard';
-import { MOCK_PRODUCTS } from '@/lib/mockProducts';
+import type { ProductCardProduct } from '@/components/catalog/ProductCard';
 
-export function HomeProductCarousels() {
-  const destacados = MOCK_PRODUCTS;
-  const promociones = [...MOCK_PRODUCTS].reverse();
+export function HomeProductCarousels({
+  products,
+}: {
+  products: ProductCardProduct[];
+}) {
+  const destacados = products;
+  const promociones = [...products].reverse();
 
   const itemsDestacados = destacados.map((product) => (
     <CarouselProductCard key={product.id} product={product} />

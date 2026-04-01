@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import type { ProductCardProduct } from '@/components/catalog/ProductCard';
-import { minProductPrice } from '@/lib/mockProducts';
+import { minProductPrice } from '@/lib/products';
 
 function formatPrice(amount: number): string {
   return new Intl.NumberFormat('es-AR', {

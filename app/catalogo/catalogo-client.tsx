@@ -35,7 +35,6 @@ export function CatalogoClient({
   const pathname = usePathname();
 
   const search = searchParams.get('search')?.trim() ?? '';
-  const typeParam = searchParams.get('type');
   const sortRaw = searchParams.get('sort') as CatalogSort | null;
   const sort: CatalogSort =
     sortRaw && VALID_SORT.includes(sortRaw) ? sortRaw : 'popular';
@@ -85,10 +84,6 @@ export function CatalogoClient({
       );
     }
 
-    if (typeParam === 'designer' || typeParam === 'arab') {
-      list = list.filter((p) => p.type === typeParam);
-    }
-
     if (size10 || size5) {
       list = list.filter((p) => {
         const ok10 = !size10 || productHasVolumeMl(p, 10);
@@ -123,7 +118,6 @@ export function CatalogoClient({
   }, [
     initialProducts,
     search,
-    typeParam,
     sort,
     size10,
     size5,
@@ -148,12 +142,14 @@ export function CatalogoClient({
           Catálogo
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-primary">
-          Decants y perfumes originales
+          Perfumes árabes
         </h1>
         <p className="mt-3 max-w-3xl text-sm text-zinc-700">
+          Catálogo online de fragancias árabes en decants y frascos cerrados.
           Elegí formato y precio, agregá al carrito y probá los niveles de combo:
           3+ unidades activa regalo y 5+ unidades activa el descuento del producto
-          más barato del grupo.
+          más barato del grupo. Para marcas de diseñador, consultá la sección a
+          pedido.
         </p>
       </div>
 

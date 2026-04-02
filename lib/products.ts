@@ -16,6 +16,8 @@ export type ProductoRow = {
   precio_full: number | null;
   precio_10ml: number | null;
   precio_5ml: number | null;
+  /** Si existe, debe ser `arab` para vender online; diseñador va por WhatsApp. */
+  categoria?: string | null;
   nombre?: string | null;
   marca?: string | null;
   tipo?: string | null;
@@ -50,6 +52,24 @@ function normalizeTipo(raw: unknown): 'designer' | 'arab' {
   const v = String(raw ?? '').toLowerCase();
   if (v === 'arab' || v === 'árabe' || v === 'arabe') return 'arab';
   return 'designer';
+}
+
+/**
+ * Prioriza columnas `categoria` / `category` (valor esperado: arab, etc.)
+ * y cae en `tipo` / `type` si no hay categoría explícita.
+ */
+function resolveProductType(row: Record<string, unknown>): 'designer' | 'arab' {
+  const cat = pickStr(row, ['categoria', 'category']).toLowerCase();
+  if (cat === 'arab' || cat === 'árabe' || cat === 'arabe') return 'arab';
+  if (
+    cat === 'designer' ||
+    cat === 'diseñador' ||
+    cat === 'disenador' ||
+    cat === 'design'
+  ) {
+    return 'designer';
+  }
+  return normalizeTipo(row['tipo'] ?? row['type']);
 }
 
 function buildSizes(row: ProductoRow): ProductSizeOption[] {
@@ -91,14 +111,12 @@ export function mapProductoRowToProduct(row: ProductoRow): ProductCardProduct {
   const displayName = name || slug;
   const brand = pickStr(r, ['marca', 'brand']) || '—';
   const imageRaw = pickStr(r, ['imagen', 'image', 'image_url']);
-  const tipoRaw = r['tipo'] ?? r['type'];
-
   return {
     id: String(row.id),
     slug,
     name: displayName,
     brand,
-    type: normalizeTipo(tipoRaw),
+    type: resolveProductType(r),
     image: imageRaw || undefined,
     sizes: buildSizes(row),
   };
@@ -125,6 +143,10 @@ export async function getProducts(): Promise<ProductCardProduct[]> {
 
   const rows = (data ?? []) as ProductoRow[];
   return rows
+    .filter(
+      (row) =>
+        resolveProductType(row as unknown as Record<string, unknown>) === 'arab'
+    )
     .map((row) => mapProductoRowToProduct(row))
     .filter((p) => p.sizes.length > 0 && p.slug.length > 0);
 }

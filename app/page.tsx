@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { HomeProductCarousels } from '@/components/home/HomeProductCarousels';
+import {
+  HomeDestacadosCarousel,
+  HomePromocionesCarousel,
+} from '@/components/home/HomeProductCarousels';
+import { HomeCategoryCards } from '@/components/home/HomeCategoryCards';
 import type { ProductCardProduct } from '@/components/catalog/ProductCard';
 import { getProducts } from '@/lib/products';
 
@@ -91,7 +95,9 @@ export default async function Home() {
         </div>
       </section>
 
-      <HomeProductCarousels products={products} />
+      <HomeDestacadosCarousel products={products} />
+      <HomeCategoryCards />
+      <HomePromocionesCarousel products={products} />
     </div>
   );
 }

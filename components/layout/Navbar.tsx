@@ -62,7 +62,7 @@ export function Navbar() {
                   <ul className="flex flex-col gap-2">
                     <li>
                       <Link
-                        href="/catalogo?type=designer"
+                        href="/disenador"
                         className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
                       >
                         Perfumes de Diseñador
@@ -70,7 +70,7 @@ export function Navbar() {
                     </li>
                     <li>
                       <Link
-                        href="/catalogo?type=arab"
+                        href="/catalogo"
                         className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
                       >
                         Perfumes Árabes

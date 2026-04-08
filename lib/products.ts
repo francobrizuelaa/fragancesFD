@@ -151,6 +151,42 @@ export async function getProducts(): Promise<ProductCardProduct[]> {
     .filter((p) => p.sizes.length > 0 && p.slug.length > 0);
 }
 
+/** Máximo de filas por carrusel en el home (evita cargar todo el catálogo). */
+const HOME_CAROUSEL_LIMIT = 10;
+
+/**
+ * Productos para carruseles del home: mismo criterio árabe que `getProducts`,
+ * con `limit` en Supabase y orden por `id`.
+ */
+export async function getHomeCarouselProducts(
+  order: 'asc' | 'desc'
+): Promise<ProductCardProduct[]> {
+  if (!hasSupabaseEnv()) {
+    return [];
+  }
+
+  const { data, error } = await getSupabase()
+    .from('productos')
+    .select('*')
+    .eq('categoria', 'arab')
+    .order('id', { ascending: order === 'asc' })
+    .limit(HOME_CAROUSEL_LIMIT);
+
+  if (error) {
+    console.error('[getHomeCarouselProducts]', error.message);
+    return [];
+  }
+
+  const rows = (data ?? []) as ProductoRow[];
+  return rows
+    .filter(
+      (row) =>
+        resolveProductType(row as unknown as Record<string, unknown>) === 'arab'
+    )
+    .map((row) => mapProductoRowToProduct(row))
+    .filter((p) => p.sizes.length > 0 && p.slug.length > 0);
+}
+
 export async function getProductBySlug(
   slug: string
 ): Promise<ProductCardProduct | undefined> {

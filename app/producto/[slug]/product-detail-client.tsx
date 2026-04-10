@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import type {
   ProductCardProduct,
@@ -20,21 +21,17 @@ function orderedSizeOptions(
 ): ProductSizeOption[] {
   const five = product.sizes.find((s) => s.volume_ml === 5);
   const ten = product.sizes.find((s) => s.volume_ml === 10);
-  const full = product.sizes.find((s) => !s.isDecant);
   const out: ProductSizeOption[] = [];
   if (five) out.push(five);
   if (ten) out.push(ten);
-  if (full) out.push(full);
   return out.length ? out : product.sizes;
 }
 
 function sizeButtonLabel(s: ProductSizeOption): string {
   if (s.volume_ml === 5) return '5ml';
   if (s.volume_ml === 10) return '10ml';
-  return 'Frasco';
+  return s.label;
 }
-
-const GALLERY_SLOTS = 4;
 
 export function ProductDetailClient({ product }: { product: ProductCardProduct }) {
   const { addItem } = useCart();
@@ -44,6 +41,8 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
   );
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const galleryImages =
+    product.images.length > 0 ? product.images : ['/decant-1.png'];
 
   const handleAdd = () => {
     if (!selected) return;
@@ -52,7 +51,7 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
       productName: product.name,
       brandName: product.brand,
       slug: product.slug,
-      coverImageUrl: '',
+      coverImageUrl: galleryImages[activeImage] ?? galleryImages[0] ?? '',
       selectedSize: {
         id: selected.id,
         label: selected.label,
@@ -69,28 +68,43 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
     <div className="mx-auto max-w-7xl px-4 py-10">
       <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
         <div>
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-gradient-to-br from-[#f5f0e7] via-[#faf7f2] to-[#e8dfd2]">
-            <div
-              className="aspect-[4/5] w-full bg-[radial-gradient(circle_at_30%_20%,_rgba(255,255,255,0.7),_transparent_50%)]"
-              role="img"
-              aria-label={`Vista ${activeImage + 1} de ${product.name}`}
-            />
-          </div>
-          <div className="mt-4 flex gap-3 sm:flex-row">
-            {Array.from({ length: GALLERY_SLOTS }, (_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setActiveImage(i)}
-                className={`h-20 flex-1 rounded-xl border bg-gradient-to-br from-zinc-100 to-zinc-200 transition-all ${
-                  activeImage === i
-                    ? 'border-accent-wine ring-2 ring-accent-wine/30'
-                    : 'border-zinc-200 opacity-80 hover:opacity-100'
-                }`}
-                aria-label={`Miniatura ${i + 1}`}
+          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+            <div className="relative aspect-[4/5] w-full">
+              <Image
+                src={galleryImages[activeImage] ?? galleryImages[0]}
+                alt={`${product.name} - imagen ${activeImage + 1}`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
               />
-            ))}
+            </div>
           </div>
+          {galleryImages.length > 1 && (
+            <div className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5">
+              {galleryImages.map((img, i) => (
+                <button
+                  key={`${img}-${i}`}
+                  type="button"
+                  onClick={() => setActiveImage(i)}
+                  className={`relative aspect-square overflow-hidden rounded-xl border transition-all ${
+                    activeImage === i
+                      ? 'border-accent-wine ring-2 ring-accent-wine/30'
+                      : 'border-zinc-200 hover:border-zinc-300'
+                  }`}
+                  aria-label={`Miniatura ${i + 1}`}
+                >
+                  <Image
+                    src={img}
+                    alt={`${product.name} miniatura ${i + 1}`}
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="min-w-0">
@@ -106,7 +120,10 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
           </p>
 
           <p className="mt-3 text-sm font-semibold text-red-600">
-            20% OFF por Transferencia
+          Llevando 3 decants, Recibís 1 decant sorpresa de regalo
+          </p>
+          <p className="mt-3 text-sm font-semibold text-red-600">
+          Llevando 6 o más, Pagás 5 y te llevás 1 decant gratis.
           </p>
 
           <div className="mt-8">

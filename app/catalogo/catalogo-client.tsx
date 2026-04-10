@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import {
   ProductCard,
@@ -8,9 +8,12 @@ import {
 } from '@/components/catalog/ProductCard';
 import {
   CatalogFiltersSidebar,
+  type CatalogGenderFilter,
+  type CatalogMainFilter,
   type CatalogSort,
 } from '@/components/catalog/CatalogFiltersSidebar';
 import {
+  getCatalogMainCategory,
   minProductPrice,
   productHasVolumeMl,
   productMatchesPriceRange,
@@ -27,8 +30,10 @@ function parsePriceParam(raw: string | null): number | null {
 
 export function CatalogoClient({
   initialProducts,
+  initialMainFilter = 'all',
 }: {
   initialProducts: ProductCardProduct[];
+  initialMainFilter?: CatalogMainFilter;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -40,19 +45,24 @@ export function CatalogoClient({
     sortRaw && VALID_SORT.includes(sortRaw) ? sortRaw : 'popular';
   const size10 = searchParams.get('size10') === '1';
   const size5 = searchParams.get('size5') === '1';
+  const mainRaw = searchParams.get('main') as CatalogMainFilter | null;
+  const mainFilter: CatalogMainFilter =
+    mainRaw &&
+    ['all', 'designer', 'nicho', 'arabes'].includes(mainRaw)
+      ? mainRaw
+      : initialMainFilter;
+  const genderRaw = searchParams.get('gender') as CatalogGenderFilter | null;
+  const gender: CatalogGenderFilter =
+    genderRaw && ['all', 'hombre', 'mujer'].includes(genderRaw)
+      ? genderRaw
+      : 'all';
   const appliedPriceMin = parsePriceParam(searchParams.get('priceMin'));
   const appliedPriceMax = parsePriceParam(searchParams.get('priceMax'));
-
-  const [draftPriceMin, setDraftPriceMin] = useState('');
-  const [draftPriceMax, setDraftPriceMax] = useState('');
-
   const priceMinKey = searchParams.get('priceMin') ?? '';
   const priceMaxKey = searchParams.get('priceMax') ?? '';
 
-  useEffect(() => {
-    setDraftPriceMin(priceMinKey);
-    setDraftPriceMax(priceMaxKey);
-  }, [priceMinKey, priceMaxKey]);
+  const [draftPriceMin, setDraftPriceMin] = useState(priceMinKey);
+  const [draftPriceMax, setDraftPriceMax] = useState(priceMaxKey);
 
   const updateParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -82,6 +92,14 @@ export function CatalogoClient({
           p.name.toLowerCase().includes(q) ||
           p.brand.toLowerCase().includes(q)
       );
+    }
+
+    if (mainFilter !== 'all') {
+      list = list.filter((p) => getCatalogMainCategory(p) === mainFilter);
+    }
+
+    if (gender !== 'all') {
+      list = list.filter((p) => p.brand.trim().toLowerCase() === gender);
     }
 
     if (size10 || size5) {
@@ -118,6 +136,8 @@ export function CatalogoClient({
   }, [
     initialProducts,
     search,
+    mainFilter,
+    gender,
     sort,
     size10,
     size5,
@@ -139,23 +159,25 @@ export function CatalogoClient({
     <div className="mx-auto w-full max-w-7xl px-4 py-8">
       <div className="mb-8">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent-wine">
-          Catálogo
+          
         </p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight text-primary">
-          Perfumes árabes
+          Catálogo de decants
         </h1>
         <p className="mt-3 max-w-3xl text-sm text-zinc-700">
-          Catálogo online de fragancias árabes en decants y frascos cerrados.
-          Elegí formato y precio, agregá al carrito y probá los niveles de combo:
-          3+ unidades activa regalo y 5+ unidades activa el descuento del producto
-          más barato del grupo. Para marcas de diseñador, consultá la sección a
-          pedido.
+          Explorá perfumes de Diseñador, Nicho y Árabes en decants y frascos.
+          Elegí formato y precio, agregá al carrito y combiná filtros por tipo,
+          tamaño y rango de precio.
         </p>
       </div>
 
       <div className="flex flex-col gap-8 md:flex-row md:items-start">
         <CatalogFiltersSidebar
           className="w-full shrink-0 md:w-1/4"
+          mainFilter={mainFilter}
+          onMainFilterChange={(v) => updateParams({ main: v === 'all' ? null : v })}
+          gender={gender}
+          onGenderChange={(v) => updateParams({ gender: v === 'all' ? null : v })}
           sort={sort}
           onSortChange={(s) =>
             updateParams({ sort: s === 'popular' ? null : s })

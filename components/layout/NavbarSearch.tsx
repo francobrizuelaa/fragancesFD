@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   useCallback,
   useEffect,
@@ -39,14 +39,11 @@ function filterPredictive(
 }
 
 function thumbnailSrc(p: ProductCardProduct): string {
-  return p.image ?? '/decant-1.png';
+  return p.images[0] ?? '/decant-1.png';
 }
 
-export function NavbarSearch() {
+export function NavbarSearch({ light = false }: { light?: boolean }) {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const urlSearch = searchParams.get('search') ?? '';
 
   const [searchQuery, setSearchQuery] = useState('');
   const [panelOpen, setPanelOpen] = useState(false);
@@ -58,14 +55,6 @@ export function NavbarSearch() {
       .then(setCatalog)
       .catch(() => setCatalog([]));
   }, []);
-
-  useEffect(() => {
-    if (pathname === '/catalogo') {
-      setSearchQuery(urlSearch);
-    } else {
-      setSearchQuery('');
-    }
-  }, [pathname, urlSearch]);
 
   const results = useMemo(
     () => filterPredictive(searchQuery, catalog),
@@ -103,7 +92,9 @@ export function NavbarSearch() {
     <div ref={containerRef} className="relative hidden min-w-[280px] max-w-sm md:block">
       <form onSubmit={handleSubmit}>
         <Search
-          className="pointer-events-none absolute left-3 top-1/2 z-[1] h-4 w-4 -translate-y-1/2 text-zinc-500"
+          className={`pointer-events-none absolute left-3 top-1/2 z-[1] h-4 w-4 -translate-y-1/2 ${
+            light ? 'text-white/80' : 'text-zinc-500'
+          }`}
           aria-hidden
         />
         <input
@@ -116,10 +107,12 @@ export function NavbarSearch() {
           }}
           onFocus={() => setPanelOpen(true)}
           placeholder="Buscar"
-          className="h-10 w-full rounded-full border border-zinc-200 bg-zinc-100/70 pl-9 pr-3 text-sm text-zinc-800 outline-none transition focus:border-zinc-300 focus:bg-white"
+          className={`h-10 w-full rounded-full border pl-9 pr-3 text-sm outline-none transition ${
+            light
+              ? 'border-white/40 bg-black/25 text-white placeholder:text-white/80 focus:border-white/60 focus:bg-black/35'
+              : 'border-zinc-200 bg-zinc-100/70 text-zinc-800 placeholder:text-zinc-500 focus:border-zinc-300 focus:bg-white'
+          }`}
           aria-label="Buscar perfumes"
-          aria-expanded={showPanel}
-          aria-controls="navbar-search-results"
           autoComplete="off"
         />
 
@@ -132,7 +125,7 @@ export function NavbarSearch() {
             {results.length > 0 ? (
               <ul className="max-h-[min(320px,70vh)] divide-y divide-zinc-200/80 overflow-y-auto">
                 {results.map((p) => (
-                  <li key={p.id} role="option">
+                  <li key={p.id} role="option" aria-selected={false}>
                     <Link
                       href={`/producto/${p.slug}`}
                       onClick={() => setPanelOpen(false)}

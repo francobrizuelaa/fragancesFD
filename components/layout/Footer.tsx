@@ -43,8 +43,10 @@ export function Footer() {
           </h3>
           <div className="mt-4">
             <a
-              href="#"
+              href="https://www.instagram.com/fragances_fd/?hl=es"
               aria-label="Instagram"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-zinc-600 text-zinc-200 transition-colors hover:border-white hover:text-white"
             >
               <svg

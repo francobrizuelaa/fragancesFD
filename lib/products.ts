@@ -25,8 +25,6 @@ export type ProductoRow = {
   name?: string | null;
   brand?: string | null;
   type?: string | null;
-  image?: string | null;
-  image_url?: string | null;
 };
 
 function pickStr(row: Record<string, unknown>, keys: string[]): string {
@@ -74,33 +72,58 @@ function resolveProductType(row: Record<string, unknown>): 'designer' | 'arab' {
 
 function buildSizes(row: ProductoRow): ProductSizeOption[] {
   const sizes: ProductSizeOption[] = [];
-  if (row.precio_full != null && !Number.isNaN(Number(row.precio_full))) {
+  // IMPORTANTE: se ignora por completo `precio_full` (frasco completo).
+  // Solo se venden decants 5ml / 10ml.
+  if (
+    row.precio_10ml != null &&
+    !Number.isNaN(Number(row.precio_10ml)) &&
+    Number(row.precio_10ml) > 0
+  ) {
     sizes.push({
-      id: 'full',
-      label: 'Frasco entero',
-      price: Number(row.precio_full),
-      isDecant: false,
-    });
-  }
-  if (row.precio_10ml != null && !Number.isNaN(Number(row.precio_10ml))) {
-    sizes.push({
-      id: 'd10',
-      label: 'Decant 10ml',
+      id: '10ml',
+      label: '10ml',
       price: Number(row.precio_10ml),
       isDecant: true,
       volume_ml: 10,
     });
   }
-  if (row.precio_5ml != null && !Number.isNaN(Number(row.precio_5ml))) {
+  if (
+    row.precio_5ml != null &&
+    !Number.isNaN(Number(row.precio_5ml)) &&
+    Number(row.precio_5ml) > 0
+  ) {
     sizes.push({
-      id: 'd5',
-      label: 'Decant 5ml',
+      id: '5ml',
+      label: '5ml',
       price: Number(row.precio_5ml),
       isDecant: true,
       volume_ml: 5,
     });
   }
   return sizes;
+}
+
+function buildProductImages(row: Record<string, unknown>): string[] {
+  const raw = String(row.imagen ?? '').trim();
+  const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim() ?? '';
+
+  if (!raw || !baseUrl) {
+    return ['/decant-1.png'];
+  }
+
+  const files = raw
+    .split(',')
+    .map((s) => s.trim().replace(/"/g, ''))
+    .filter(Boolean);
+
+  if (files.length === 0) {
+    return ['/decant-1.png'];
+  }
+
+  return files.map(
+    (file) =>
+      `${baseUrl}/storage/v1/object/public/perfumes/${encodeURIComponent(file)}`
+  );
 }
 
 export function mapProductoRowToProduct(row: ProductoRow): ProductCardProduct {
@@ -110,16 +133,25 @@ export function mapProductoRowToProduct(row: ProductoRow): ProductCardProduct {
   if (!slug) slug = String(row.id);
   const displayName = name || slug;
   const brand = pickStr(r, ['marca', 'brand']) || '—';
-  const imageRaw = pickStr(r, ['imagen', 'image', 'image_url']);
+  const images = buildProductImages(r);
   return {
     id: String(row.id),
     slug,
     name: displayName,
     brand,
     type: resolveProductType(r),
-    image: imageRaw || undefined,
+    images,
     sizes: buildSizes(row),
   };
+}
+
+export type CatalogMainCategory = 'designer' | 'nicho' | 'arabes';
+
+export function getCatalogMainCategory(product: ProductCardProduct): CatalogMainCategory {
+  const marca = product.brand.trim().toLowerCase();
+  if (marca === 'hombre' || marca === 'mujer') return 'designer';
+  if (marca === 'nicho') return 'nicho';
+  return 'arabes';
 }
 
 export async function getProducts(): Promise<ProductCardProduct[]> {
@@ -143,10 +175,31 @@ export async function getProducts(): Promise<ProductCardProduct[]> {
 
   const rows = (data ?? []) as ProductoRow[];
   return rows
-    .filter(
-      (row) =>
-        resolveProductType(row as unknown as Record<string, unknown>) === 'arab'
-    )
+    .map((row) => mapProductoRowToProduct(row))
+    .filter((p) => p.sizes.length > 0 && p.slug.length > 0);
+}
+
+export async function getProductsByMarca(
+  marca: string,
+  limit: number = 10
+): Promise<ProductCardProduct[]> {
+  if (!hasSupabaseEnv()) {
+    return [];
+  }
+
+  const { data, error } = await getSupabase()
+    .from('productos')
+    .select('*')
+    .ilike('marca', marca)
+    .limit(limit);
+
+  if (error) {
+    console.error('[getProductsByMarca]', error.message);
+    return [];
+  }
+
+  const rows = (data ?? []) as ProductoRow[];
+  return rows
     .map((row) => mapProductoRowToProduct(row))
     .filter((p) => p.sizes.length > 0 && p.slug.length > 0);
 }

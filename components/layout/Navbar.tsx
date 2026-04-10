@@ -9,17 +9,27 @@ import { CartSidebar } from '@/components/cart/CartSidebar';
 import { useCart } from '@/hooks/useCart';
 import { NavbarSearch } from '@/components/layout/NavbarSearch';
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({
+  href,
+  label,
+  light,
+}: {
+  href: string;
+  label: string;
+  light?: boolean;
+}) {
   const pathname = usePathname();
   const active = pathname === href;
 
   return (
     <Link
       href={href}
-      className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+      className={`rounded-full px-4 py-2 text-base font-semibold transition-colors ${
         active
           ? 'text-accent-wine'
-          : 'text-primary hover:text-accent-wine'
+          : light
+            ? 'text-accent-wine'
+            : 'text-accent-wine hover:text-[#4d1822]'
       }`}
     >
       {label}
@@ -28,41 +38,48 @@ function NavLink({ href, label }: { href: string; label: string }) {
 }
 
 export function Navbar() {
+  const pathname = usePathname();
   const [cartOpen, setCartOpen] = useState(false);
   const { itemCount } = useCart();
+  const isHome = pathname === '/';
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-zinc-200/80 bg-cream/95 backdrop-blur-md">
-        <nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-4 px-4">
-          <Link href="/" className="flex items-center gap-3">
+      <header
+        className={`inset-x-0 top-0 z-40 border-b border-zinc-200/80 bg-white/95 backdrop-blur-md transition-all duration-300 ${
+          isHome ? 'fixed' : 'sticky'
+        }`}
+      >
+        <nav className="relative mx-auto grid h-20 w-full max-w-7xl grid-cols-[1fr_auto] items-center gap-4 px-4 lg:h-24">
+          <Link href="/" className="justify-self-start">
             <Image
-              src="/logo.png"
-              alt="fragances FD"
-              width={150}
-              height={45}
-              priority
-              className="h-auto w-auto max-h-[45px] w-auto object-contain"
-            />
+            src="/logo3.png"
+            alt="fragances FD"
+            width={170}
+            height={52}
+            priority
+            // Dejamos la altura fija (52px o h-12) y el ancho automático
+            className="h-[52px] w-auto object-contain"
+          />
             <span className="sr-only">fragances FD</span>
           </Link>
 
-          <div className="hidden items-center gap-2 sm:flex">
+          <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-2 md:flex">
             <NavLink href="/" label="Inicio" />
             <div className="group relative">
               <Link
                 href="/catalogo"
-                className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-sm font-medium text-primary transition-colors hover:text-accent-wine"
+                className="inline-flex items-center gap-1 rounded-full px-4 py-2 text-base font-semibold text-accent-wine transition-colors hover:text-[#4d1822]"
               >
                 Catálogo
-                <ChevronDown className="h-4 w-4" aria-hidden />
+                <ChevronDown className="h-5 w-5" aria-hidden />
               </Link>
               <div className="pointer-events-none absolute left-0 top-full z-50 pt-2 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
                 <div className="min-w-[280px] rounded-2xl border border-zinc-200 bg-cream p-4 shadow-xl">
                   <ul className="flex flex-col gap-2">
                     <li>
                       <Link
-                        href="/disenador"
+                        href="/catalogo/disenador"
                         className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
                       >
                         Perfumes de Diseñador
@@ -70,10 +87,26 @@ export function Navbar() {
                     </li>
                     <li>
                       <Link
-                        href="/catalogo"
+                        href="/catalogo/arabes"
                         className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
                       >
                         Perfumes Árabes
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/catalogo/nicho"
+                        className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
+                      >
+                        Perfumes de Nicho
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/catalogo"
+                        className="block rounded-xl px-4 py-3 text-base font-semibold text-primary transition-colors hover:bg-zinc-100 hover:text-accent-wine"
+                      >
+                        Catálogo Completo
                       </Link>
                     </li>
                   </ul>
@@ -86,7 +119,7 @@ export function Navbar() {
             <Suspense
               fallback={
                 <div
-                  className="hidden h-10 min-w-[280px] max-w-sm animate-pulse rounded-full border border-zinc-200 bg-zinc-100/70 md:block"
+                  className="hidden h-11 min-w-[280px] max-w-sm animate-pulse rounded-full border border-zinc-200 bg-zinc-100/70 md:block"
                   aria-hidden
                 />
               }
@@ -97,11 +130,11 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setCartOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-accent-wine px-3.5 py-2 text-sm font-medium text-accent-wine transition-colors hover:bg-accent-wine hover:text-white"
+              className="inline-flex items-center gap-2 rounded-full border border-accent-wine px-4 py-2.5 text-base font-semibold text-accent-wine transition-colors hover:bg-accent-wine hover:text-white"
               aria-label="Abrir carrito"
             >
               <svg
-                className="h-4.5 w-4.5"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

@@ -4,12 +4,10 @@ import Image from 'next/image';
 function CategoryCard({
   href,
   title,
-  subtitle,
   imageSrc,
 }: {
   href: string;
   title: string;
-  subtitle: string;
   imageSrc: string;
 }) {
   return (
@@ -29,13 +27,10 @@ function CategoryCard({
           className="absolute inset-0 bg-black/45 transition-colors duration-500 group-hover:bg-black/50"
           aria-hidden
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center sm:gap-5">
+        <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
           <h2 className="font-serif text-2xl font-semibold uppercase tracking-[0.14em] text-white drop-shadow-sm sm:text-3xl md:text-4xl">
             {title}
           </h2>
-          <p className="max-w-md text-xs font-medium uppercase tracking-[0.22em] text-white/85 sm:text-sm">
-            {subtitle}
-          </p>
         </div>
       </div>
     </Link>
@@ -45,21 +40,24 @@ function CategoryCard({
 export function HomeCategoryCards() {
   return (
     <section
-      className="mx-auto w-full max-w-[1400px] px-4 pb-10 md:px-12"
+      className="mx-auto w-full max-w-[1600px] px-5 pb-12 sm:px-4 md:px-16 2xl:px-24"
       aria-label="Categorías"
     >
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         <CategoryCard
-          href="/catalogo"
-          title="Perfumes árabes"
-          subtitle="Compra online · envío a todo el país"
-          imageSrc="/arabes.png"
+          href="/catalogo/arabes"
+          title=""
+          imageSrc="/arabes3.png"
         />
         <CategoryCard
-          href="/disenador"
-          title="Perfumes de diseñador"
-          subtitle="A pedido · consultá por WhatsApp"
-          imageSrc="/disenador.png"
+          href="/catalogo/disenador"
+          title=""
+          imageSrc="/diseñador2.png"
+        />
+        <CategoryCard
+          href="/catalogo/nicho"
+          title=""
+          imageSrc="/nicho.png"
         />
       </div>
     </section>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo } from 'react';
 import Autoplay from 'embla-carousel-autoplay';
 import {
@@ -14,14 +15,16 @@ import type { ProductCardProduct } from '@/components/catalog/ProductCard';
 
 /** ~1 tarjeta visible en mobile (con leve peek), 2 en tablet, 4 en desktop. */
 const slideBasis =
-  'basis-[88%] min-w-0 md:basis-1/2 lg:basis-1/4';
+  'basis-[85%] min-w-0 md:basis-1/2 lg:basis-1/4 xl:basis-1/5';
 
-function HomeProductCarouselSection({
+export function HomeProductCarouselSection({
   title,
+  href,
   products,
   emptyMessage,
 }: {
   title: string;
+  href?: string;
   products: ProductCardProduct[];
   emptyMessage: string;
 }) {
@@ -37,8 +40,8 @@ function HomeProductCarouselSection({
 
   if (products.length === 0) {
     return (
-      <section className="mx-auto w-full max-w-[1400px] px-4 pb-10 md:px-12">
-        <h2 className="mb-2 text-2xl font-semibold tracking-tight text-primary">
+      <section className="mx-auto mt-12 w-full max-w-[1600px] px-5 pb-10 sm:px-4 md:mt-16 md:px-16 2xl:px-24">
+        <h2 className="mb-2 text-2xl font-bold tracking-tight text-primary md:text-3xl">
           {title}
         </h2>
         <p className="text-sm text-zinc-600">{emptyMessage}</p>
@@ -47,14 +50,22 @@ function HomeProductCarouselSection({
   }
 
   return (
-    <section className="mx-auto w-full max-w-[1400px] px-4 pb-10 md:px-12">
-      <h2 className="mb-6 text-2xl font-semibold tracking-tight text-primary">
-        {title}
-      </h2>
+    <section className="mx-auto mt-12 w-full max-w-[1600px] px-5 pb-10 sm:px-4 md:mt-16 md:px-16 2xl:px-24">
+      {href ? (
+        <h2 className="mb-6 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          <Link href={href} className="hover:text-accent-wine">
+            {title}
+          </Link>
+        </h2>
+      ) : (
+        <h2 className="mb-6 text-2xl font-bold tracking-tight text-primary md:text-3xl">
+          {title}
+        </h2>
+      )}
       <Carousel
         opts={{ loop: true, align: 'start' }}
         plugins={[autoplay]}
-        className="w-full px-10 md:px-14"
+        className="w-full"
       >
         <CarouselContent>
           {products.map((product) => (
@@ -63,8 +74,8 @@ function HomeProductCarouselSection({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        <CarouselPrevious className="hidden md:flex" />
+        <CarouselNext className="hidden md:flex" />
       </Carousel>
     </section>
   );

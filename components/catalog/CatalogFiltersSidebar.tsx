@@ -3,8 +3,14 @@
 import { cn } from '@/lib/utils';
 
 export type CatalogSort = 'popular' | 'price-asc' | 'price-desc';
+export type CatalogMainFilter = 'all' | 'designer' | 'nicho' | 'arabes';
+export type CatalogGenderFilter = 'all' | 'hombre' | 'mujer';
 
 export interface CatalogFiltersSidebarProps {
+  mainFilter: CatalogMainFilter;
+  onMainFilterChange: (v: CatalogMainFilter) => void;
+  gender: CatalogGenderFilter;
+  onGenderChange: (v: CatalogGenderFilter) => void;
   sort: CatalogSort;
   onSortChange: (sort: CatalogSort) => void;
   size10: boolean;
@@ -20,6 +26,10 @@ export interface CatalogFiltersSidebarProps {
 }
 
 export function CatalogFiltersSidebar({
+  mainFilter,
+  onMainFilterChange,
+  gender,
+  onGenderChange,
   sort,
   onSortChange,
   size10,
@@ -43,6 +53,39 @@ export function CatalogFiltersSidebar({
       <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-primary">
         Filtros
       </h2>
+
+      <div className="mt-5 space-y-2">
+        <label htmlFor="catalog-main-type" className="text-xs font-medium text-zinc-600">
+          Tipo de catálogo
+        </label>
+        <select
+          id="catalog-main-type"
+          value={mainFilter}
+          onChange={(e) => onMainFilterChange(e.target.value as CatalogMainFilter)}
+          className="w-full rounded-xl border border-zinc-200 bg-cream px-3 py-2.5 text-sm text-primary outline-none focus:border-accent-wine"
+        >
+          <option value="all">Todos</option>
+          <option value="designer">Diseñador</option>
+          <option value="nicho">Nicho</option>
+          <option value="arabes">Árabes</option>
+        </select>
+      </div>
+
+      <div className="mt-5 space-y-2">
+        <label htmlFor="catalog-gender" className="text-xs font-medium text-zinc-600">
+          Género
+        </label>
+        <select
+          id="catalog-gender"
+          value={gender}
+          onChange={(e) => onGenderChange(e.target.value as CatalogGenderFilter)}
+          className="w-full rounded-xl border border-zinc-200 bg-cream px-3 py-2.5 text-sm text-primary outline-none focus:border-accent-wine"
+        >
+          <option value="all">Todos</option>
+          <option value="hombre">Hombre</option>
+          <option value="mujer">Mujer</option>
+        </select>
+      </div>
 
       <div className="mt-5 space-y-2">
         <label htmlFor="catalog-sort" className="text-xs font-medium text-zinc-600">

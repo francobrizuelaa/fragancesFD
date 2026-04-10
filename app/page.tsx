@@ -1,62 +1,107 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  HomeDestacadosCarousel,
-  HomePromocionesCarousel,
-} from '@/components/home/HomeProductCarousels';
+import { HomeProductCarouselSection } from '@/components/home/HomeProductCarousels';
 import { HomeCategoryCards } from '@/components/home/HomeCategoryCards';
-import type { ProductCardProduct } from '@/components/catalog/ProductCard';
-import { getHomeCarouselProducts } from '@/lib/products';
+import { BrandsMarquee } from '@/components/home/BrandsMarquee';
+import { getProductsByMarca } from '@/lib/products';
 
 export const revalidate = 60;
 
+const SECCION_MARCAS = [
+  'hombre',
+  'mujer',
+  'nicho',
+  'afnan',
+  'armaf',
+  'bharara',
+  'french',
+  'haramain',
+  'lattafa',
+  'orientica',
+  'rasasi',
+] as const;
+
+function formatSectionTitle(key: (typeof SECCION_MARCAS)[number]): string {
+  if (key === 'hombre') return 'Tendencias masculinas';
+  if (key === 'mujer') return 'Tendencias femeninas';
+  if (key === 'nicho') return 'Nicho';
+  return `Línea ${key.charAt(0).toUpperCase()}${key.slice(1)}`;
+}
+
 export default async function Home() {
-  const [destacados, promociones]: [ProductCardProduct[], ProductCardProduct[]] =
-    await Promise.all([
-      getHomeCarouselProducts('asc'),
-      getHomeCarouselProducts('desc'),
-    ]);
+  const secciones = await Promise.all(
+    SECCION_MARCAS.map(async (key) => ({
+      key,
+      title: formatSectionTitle(key),
+      products: await getProductsByMarca(key, 10),
+    }))
+  );
 
   return (
     <div className="bg-cream">
+      
+      {/* SECCIÓN 1: PORTADA SIN FILTRO OSCURO */}
       <section
-        className="relative mb-24 w-full min-h-[280px] overflow-hidden sm:mb-32 sm:min-h-[340px]"
+        className="relative mb-24 w-full min-h-screen overflow-hidden sm:mb-32"
         aria-label="Promoción"
       >
         <div className="absolute inset-0">
           <Image
-            src="/promo.png"
-            alt=""
+            src="/portada2.png"
+            alt="Portada principal"
             fill
             priority
             sizes="100vw"
-            className="object-cover"
+            className="object-cover object-center"
           />
-        </div>
-        <div className="absolute inset-0 bg-black/40" aria-hidden />
-        <div className="relative z-10 mx-auto flex min-h-[280px] w-full max-w-4xl flex-col items-center justify-center px-4 py-16 text-center sm:min-h-[340px] sm:py-24">
-          <p className="mb-4 max-w-3xl font-serif text-3xl italic leading-snug text-[#f5f0e8] md:mb-6 md:text-5xl md:leading-tight">
-            ¡Decant de regalo llevando 3 productos!
-          </p>
-          <p className="font-sans text-sm font-light uppercase tracking-[0.35em] text-white/90 md:text-base">
-            ¡Perfume de regalo llevando 5!
-          </p>
         </div>
       </section>
 
+      {/* SECCIÓN 2: TEXTO PREMIUM Y FOTO FLOTANTE */}
       <section className="border-b border-zinc-200/70">
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 md:grid-cols-2 md:items-center md:py-24">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-accent-wine">
-              fragances FD
+        <div className="mx-auto grid max-w-[1600px] gap-12 px-5 py-12 sm:px-4 md:grid-cols-2 md:items-center md:py-16 lg:px-16 2xl:px-24">
+          
+          {/* Columna Izquierda: Textos y Promos Premium */}
+          <div className="flex flex-col justify-center">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-accent-wine/80">
+              Fragances FD
             </p>
-            <h1 className="mt-4 text-5xl font-semibold leading-tight tracking-tight text-primary sm:text-6xl">
-              Descubrí Aromas con Distinción
+            
+            <h1 className="mt-4 text-4xl font-extrabold leading-[1.15] tracking-tight text-primary sm:text-5xl md:text-6xl">
+              Probá en decants antes de invertir en el frasco completo
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-zinc-700">
-              Perfumes originales en decants y frascos cerrados. Curaduría premium,
-              presentación impecable y una experiencia de compra simple.
+
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-600">
+              Contamos con un catálogo de más de <span className="font-semibold text-zinc-900">2000 fragancias</span>. Descubrí nuevas opciones y elegí la que mejor va con vos.
             </p>
+
+            {/* Cajas de Promociones Premium */}
+            <div className="mt-8 flex flex-col gap-3 max-w-lg">
+              
+              {/* Promo 1 */}
+              <div className="flex items-center gap-4 rounded-2xl border border-zinc-200/60 bg-white/60 px-5 py-4 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.05)] backdrop-blur-sm transition-colors hover:border-accent-wine/30">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-wine/10 text-2xl">
+                  🎁
+                </div>
+                <div>
+                  <p className="text-base font-bold text-zinc-900">Llevando 3 decants</p>
+                  <p className="text-sm text-zinc-600 mt-0.5">Recibís 1 decant sorpresa de regalo.</p>
+                </div>
+              </div>
+
+              {/* Promo 2 */}
+              <div className="flex items-center gap-4 rounded-2xl border border-zinc-200/60 bg-white/60 px-5 py-4 shadow-[0_4px_15px_-3px_rgba(0,0,0,0.05)] backdrop-blur-sm transition-colors hover:border-accent-wine/30">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent-wine/10 text-2xl">
+                  🎁
+                </div>
+                <div>
+                  <p className="text-base font-bold text-zinc-900">Llevando 6 o más</p>
+                  <p className="text-sm text-zinc-600 mt-0.5">Pagás 5 y te llevás 1 decant gratis.</p>
+                </div>
+              </div>
+
+            </div>
+
             <div className="mt-9">
               <Link
                 href="/catalogo"
@@ -68,46 +113,49 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="relative mx-auto h-[380px] w-full max-w-[440px]">
-            <div className="absolute left-0 top-10 h-[280px] w-[210px] overflow-hidden rounded-[2rem] shadow-[0_16px_36px_-22px_rgba(0,0,0,0.45)]">
-              <Image
-                src="/decant-1.png"
-                alt="Decant de perfume 1"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-
-            <div className="absolute right-4 top-0 h-[320px] w-[230px] overflow-hidden rounded-[2rem] shadow-[0_24px_40px_-22px_rgba(0,0,0,0.5)]">
-              <Image
-                src="/decant-1.png"
-                alt="Decant de perfume 2"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-
-            <div className="absolute left-12 top-32 h-[280px] w-[220px] overflow-hidden rounded-[2rem] border-[6px] border-[#fdfbf7] shadow-2xl">
-              <Image
-                src="/decant-1.png"
-                alt="Decant de perfume principal"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
+          {/* Columna Derecha: Imagen Flotante Ancha */}
+          <div className="relative w-full max-w-[600px] mx-auto lg:ml-auto lg:mr-0 lg:max-w-[750px]">
+            <Image
+              src="/fotoinicio3.png"
+              alt="Promo perfumes"
+              width={800}
+              height={800}
+              priority
+              className="w-full h-auto object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-700"
+            />
           </div>
+          
         </div>
       </section>
 
-      <HomeDestacadosCarousel products={destacados} />
-      <HomePromocionesCarousel products={promociones} />
+      {/* SECCIÓN 3: CARRUSELES DE PERFUMES */}
+      {secciones.map(({ key, title, products }) =>
+        products.length > 0 ? (
+          <HomeProductCarouselSection
+            key={key}
+            title={title}
+            href={
+              key === 'hombre'
+                ? '/catalogo/disenador?gender=hombre'
+                : key === 'mujer'
+                  ? '/catalogo/disenador?gender=mujer'
+                  : key === 'nicho'
+                    ? '/catalogo/nicho'
+                    : undefined
+            }
+            products={products}
+            emptyMessage={`No hay productos para ${title.toLowerCase()} por ahora.`}
+          />
+        ) : null
+      )}
 
+      {/* SECCIÓN 4: TARJETAS FINALES (Árabes, Diseñador, Nicho) */}
       <div className="mt-24">
         <HomeCategoryCards />
       </div>
+
+      <BrandsMarquee />
+      
     </div>
   );
 }

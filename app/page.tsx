@@ -47,7 +47,7 @@ export default async function Home() {
       >
         <div className="absolute inset-0">
           <Image
-            src="/portada2.png"
+            src="/portada_inicio.png"
             alt="Portada principal"
             fill
             priority

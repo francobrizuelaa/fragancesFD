@@ -40,21 +40,19 @@ export default async function Home() {
   return (
     <div className="bg-cream">
       
-      {/* SECCIÓN 1: PORTADA SIN FILTRO OSCURO */}
+      {/* SECCIÓN 1: PORTADA ARREGLADA PARA CELULAR Y COMPU */}
       <section
-        className="relative mb-24 w-full min-h-screen overflow-hidden sm:mb-32"
+        className="relative mb-12 w-full h-[50vh] sm:h-[60vh] md:min-h-[85vh] overflow-hidden sm:mb-32"
         aria-label="Promoción"
       >
-        <div className="absolute inset-0">
-          <Image
-            src="/portada_inicio.png"
-            alt="Portada principal"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-center"
-          />
-        </div>
+        <Image
+          src="/portada_inicio.png"
+          alt="Portada principal"
+          fill
+          priority
+          sizes="100vw"
+          className="object-contain md:object-cover object-center"
+        />
       </section>
 
       {/* SECCIÓN 2: TEXTO PREMIUM Y FOTO FLOTANTE */}

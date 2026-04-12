@@ -40,18 +40,20 @@ export default async function Home() {
   return (
     <div className="bg-cream">
       
-      {/* SECCIÓN 1: PORTADA ARREGLADA PARA CELULAR Y COMPU */}
+      {/* SECCIÓN 1: PORTADA PERFECTA (Sin cortes en ningún lado) */}
       <section
-        className="relative mb-12 w-full h-[50vh] sm:h-[60vh] md:min-h-[85vh] overflow-hidden sm:mb-32"
+        className="relative mb-12 w-full overflow-hidden sm:mb-32"
         aria-label="Promoción"
       >
         <Image
           src="/portada_inicio.png"
           alt="Portada principal"
-          fill
+          width={1920}
+          height={800}
           priority
           sizes="100vw"
-          className="object-contain md:object-cover object-center"
+          // Al sacarle el "fill" y ponerle w-full h-auto, la imagen nunca se recorta
+          className="w-full h-auto" 
         />
       </section>
 

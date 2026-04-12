@@ -40,9 +40,9 @@ export default async function Home() {
   return (
     <div className="bg-cream">
       
-      {/* SECCIÓN 1: PORTADA PERFECTA (Sin cortes en ningún lado) */}
+      {/* SECCIÓN 1: PORTADA PERFECTA (Espacio en celu, pegado en PC) */}
       <section
-        className="relative mb-12 w-full overflow-hidden sm:mb-32"
+        className="relative mt-24 md:mt-4 lg:mt-0 mb-12 w-full overflow-hidden sm:mb-32"
         aria-label="Promoción"
       >
         <Image
@@ -52,7 +52,6 @@ export default async function Home() {
           height={800}
           priority
           sizes="100vw"
-          // Al sacarle el "fill" y ponerle w-full h-auto, la imagen nunca se recorta
           className="w-full h-auto" 
         />
       </section>

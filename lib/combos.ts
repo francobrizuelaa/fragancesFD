@@ -16,30 +16,31 @@ export function getComboTier(items: CartItem[]): ComboTier {
 export function evaluateCombos(items: CartItem[]): ComboGroup[] {
   const units: { cartItemId: string; price: number }[] = [];
 
+  // 1. Desarmamos todo el carrito en unidades individuales
   for (const item of items) {
     for (let i = 0; i < item.quantity; i += 1) {
       units.push({ cartItemId: item.cartItemId, price: item.unitPrice });
     }
   }
 
-  units.sort((a, b) => b.price - a.price);
+  // 2. LA MAGIA: Ordenamos de MENOR a MAYOR precio absoluto (los más baratos primero)
+  units.sort((a, b) => a.price - b.price);
 
   const comboGroups: ComboGroup[] = [];
-  let i = 0;
+  
+  // 3. Calculamos matemáticamente cuántos perfumes gratis tocan
+  const freeItemsCount = Math.floor(units.length / GROUP_SIZE);
 
-  while (i + GROUP_SIZE <= units.length) {
-    const group = units.slice(i, i + GROUP_SIZE);
-    const bonified = group[group.length - 1];
-    const groupItemIds = [...new Set(group.map((unit) => unit.cartItemId))];
+  // 4. Regalamos exactamente esa cantidad, agarrando los primeros de la lista (los más baratos)
+  for (let i = 0; i < freeItemsCount; i++) {
+    const bonified = units[i];
 
     comboGroups.push({
       comboId: uuidv4(),
-      items: items.filter((item) => groupItemIds.includes(item.cartItemId)),
+      items: items.filter(item => item.cartItemId === bonified.cartItemId),
       bonifiedItemCartId: bonified.cartItemId,
       savings: bonified.price,
     });
-
-    i += GROUP_SIZE;
   }
 
   return comboGroups;

@@ -114,9 +114,15 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
               const size = item.selectedSize?.label
                 ? ` · ${item.selectedSize.label}`
                 : '';
-              const bonified = Boolean(item.isBonified);
+              
+              // MAGIA VISUAL ACÁ: Contamos exactamente cuántas veces se bonificó este ítem
+              const bonifiedCount = combos?.filter(c => c.bonifiedItemCartId === item.cartItemId).length || 0;
+              const isBonified = comboTier === 'tier2' && bonifiedCount > 0;
+              
               const lineFull = item.unitPrice * item.quantity;
-              const lineDisplay = bonified ? 0 : lineFull;
+              const discountAmount = isBonified ? (item.unitPrice * bonifiedCount) : 0;
+              // El precio a mostrar es el total menos el descuento de las unidades gratis
+              const lineDisplay = lineFull - discountAmount;
 
               return (
                 <li
@@ -134,20 +140,20 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
                           {size}
                         </span>
                       </p>
-                      {bonified && (
+                      {isBonified && (
                         <span className="mt-1 inline-block rounded-md bg-accent-wine/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-accent-wine">
-                          Bonificado
+                          {bonifiedCount > 1 ? `Bonificado (${bonifiedCount} gratis)` : 'Bonificado'}
                         </span>
                       )}
                     </div>
                     <div className="text-right">
-                      {bonified ? (
+                      {isBonified ? (
                         <div>
                           <p className="text-xs text-zinc-400 line-through">
                             {formatMoney(lineFull)}
                           </p>
                           <p className="font-semibold tabular-nums text-accent-wine">
-                            {formatMoney(0)}
+                            {formatMoney(lineDisplay)}
                           </p>
                         </div>
                       ) : (

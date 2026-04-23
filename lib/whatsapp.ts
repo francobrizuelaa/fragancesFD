@@ -13,24 +13,57 @@ interface CheckoutData {
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER!;
 
-// TRUCO 3: Normalizar la cadena para evitar caracteres rotos
-function sanitizeMessage(text: string): string {
-  return text.normalize('NFC');
+const RULE_HEAVY = '================================';
+const RULE_LIGHT = '--------------------------------';
+
+function stripInvalidSurrogates(input: string): string {
+  let out = '';
+  for (let i = 0; i < input.length; i++) {
+    const codeUnit = input.charCodeAt(i);
+    if (codeUnit >= 0xd800 && codeUnit <= 0xdbff) {
+      const next = input.charCodeAt(i + 1);
+      if (next >= 0xdc00 && next <= 0xdfff) {
+        out += input[i] + input[i + 1];
+        i++;
+      }
+      continue;
+    }
+    if (codeUnit >= 0xdc00 && codeUnit <= 0xdfff) continue;
+    out += input[i];
+  }
+  return out;
 }
 
-// TRUCO 4: Limpiar el espacio invisible (\u00A0) que rompe las URLs
+function sanitizeWhatsAppText(text: string): string {
+  const normalizedNewlines = text.replace(/\r\n?/g, '\n');
+  const withoutBrokenSurrogates = stripInvalidSurrogates(normalizedNewlines);
+  return withoutBrokenSurrogates
+    .normalize('NFC')
+    .replace(/[\u00A0\u202F]/g, ' ');
+}
+
+function sanitizeWaMeNumber(raw: string): string {
+  return raw.replace(/[^\d]/g, '');
+}
+
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('es-AR', {
     style: 'currency',
     currency: 'ARS',
   })
     .format(amount)
-    .replace(/\u00A0/g, ' '); 
+    .replace(/\u00A0/g, ' ');
 }
+
+const FD_TIPS = [
+  'Escribinos en este chat si preferís retiro o envío y acordamos detalle.',
+  'Para pedidos grandes, confirmá stock antes de abonar (así vamos a tono).',
+  'Podés mandarnos comprobante y dirección en el mismo hilo; respondemos con horarios.',
+] as const;
 
 export function buildWhatsAppMessage(data: CheckoutData): string {
   const totalUnits = data.items.reduce((acc, item) => acc + item.quantity, 0);
-  const hasSurpriseGift = (totalUnits % 5) >= 3;
+  const hasSurpriseGift = totalUnits % 5 >= 3;
 
   const bonifiedIds = new Set(
     data.comboTier === 'tier2'
@@ -38,55 +71,60 @@ export function buildWhatsAppMessage(data: CheckoutData): string {
       : []
   );
 
-  const lines = data.items.map((item) => {
+  const lines = data.items.map((item, i) => {
+    const n = i + 1;
     const size = item.selectedSize ? ` (${item.selectedSize.label})` : '';
     const isBonified = bonifiedIds.has(item.cartItemId);
-    
-    // TRUCO 2: Unicode explícito (\u{1F381} = 🎁)
     const lineTotal = isBonified
-      ? `~${formatCurrency(item.unitPrice * item.quantity)}~ *¡GRATIS!* \u{1F381}`
+      ? `~${formatCurrency(item.unitPrice * item.quantity)}~  *GRATIS (bonificado)*`
       : `*${formatCurrency(item.unitPrice * item.quantity)}*`;
-
-    // \u{1F538} = 🔸 | \u21B3 = ↳
-    return `\u{1F538} ${item.quantity}x ${item.brandName} - ${item.productName}${size}\n   \u21B3 ${lineTotal}`;
+    return [
+      `(${n})  ${item.quantity}x  ${item.brandName}  -  ${item.productName}${size}`,
+      `     Total línea:  ${lineTotal}`,
+    ].join('\n');
   });
 
-  const summaryLines: string[] = [];
-  // \u{1F4DD} = 📝
-  summaryLines.push(`\u{1F4DD} Subtotal: ${formatCurrency(data.subtotal)}`);
-  
+  const summary: string[] = [
+    `Subtotal:   ${formatCurrency(data.subtotal)}`,
+  ];
   if (data.comboTier === 'tier2' && data.totalSavings > 0) {
-    // \u{1F4B8} = 💸
-    summaryLines.push(`\u{1F4B8} Descuentos: -${formatCurrency(data.totalSavings)}`);
+    summary.push(`Ahorro combo:  -${formatCurrency(data.totalSavings)}`);
   }
-  // \u{1F4B0} = 💰
-  summaryLines.push(`\u{1F4B0} *TOTAL A PAGAR: ${formatCurrency(data.total)}*`);
+  summary.push(`*TOTAL A PAGAR:  ${formatCurrency(data.total)}*`);
 
-  // \u2728 = ✨
   const giftLine = hasSurpriseGift
-    ? '\u2728 *¡ATENCIÓN! Este pedido incluye 1 Decant Sorpresa de Regalo* \u2728'
+    ? `*PROMO ACTIVA:*  Este pedido incluye 1 decant sorpresa de regalo.`
     : null;
 
   const message = [
-    // \u{1F6CD}\u{FE0F} = 🛍️ | \u{1F5A4} = 🖤
-    '\u{1F6CD}\u{FE0F} *NUEVO PEDIDO - FD FRAGANCES* \u{1F5A4}',
-    '-----------------------------------',
-    // \u{1F464} = 👤
-    ...(data.customerName ? [`\u{1F464} *Cliente:* ${data.customerName}`, ''] : []),
-    // \u{1F4E6} = 📦
-    '\u{1F4E6} *Detalle de la compra:*',
+    `*NUEVO PEDIDO  |  FD FRAGANCES*`,
+    `${RULE_HEAVY}`,
+    ...(data.customerName
+      ? ['', `*Cliente:*  ${data.customerName}`]
+      : []),
+    '',
+    `*Detalle*`,
     ...lines,
-    '-----------------------------------',
-    ...summaryLines,
+    '',
+    `${RULE_LIGHT}`,
+    ...summary,
     ...(giftLine ? ['', giftLine] : []),
-    // \u{1F4CC} = 📌
-    ...(data.customerNotes ? ['', `\u{1F4CC} _Notas del cliente: ${data.customerNotes}_`] : []),
+    ...(data.customerNotes
+      ? ['', `*Notas del cliente*`, `_ ${data.customerNotes} _`]
+      : []),
+    '',
+    `${RULE_LIGHT}`,
+    `*FD Tips*`,
+    ...FD_TIPS.map((t, idx) => `${idx + 1}. ${t}`),
   ].join('\n');
 
-  return sanitizeMessage(message).trim();
+  return sanitizeWhatsAppText(message).trim();
 }
 
 export function buildWhatsAppURL(message: string): string {
-  // Ahora el string ya está sanitizado y limpio de espacios raros antes de encodearse
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const number = sanitizeWaMeNumber(WHATSAPP_NUMBER);
+  const safeMessage = sanitizeWhatsAppText(message).trim();
+  const url = new URL(`https://wa.me/${number}`);
+  url.searchParams.set('text', safeMessage);
+  return url.toString();
 }

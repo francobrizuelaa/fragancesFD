@@ -19,11 +19,6 @@ export function Footer() {
                 Términos del servicio
               </Link>
             </li>
-            <li>
-              <Link href="#" className="transition-colors hover:text-white">
-                Cambios y devoluciones
-              </Link>
-            </li>
           </ul>
         </div>
 
@@ -32,7 +27,7 @@ export function Footer() {
             Contactanos
           </h3>
           <div className="mt-4 space-y-2 text-sm text-zinc-300">
-            <p>Tel: +54 9 11 0000-0000</p>
+            <p>Tel: +54 9 11 76661815</p>
             <p>Mail: contacto@fragancesfd.com</p>
           </div>
         </div>

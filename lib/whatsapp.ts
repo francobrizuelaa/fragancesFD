@@ -14,6 +14,10 @@ interface CheckoutData {
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER!;
 
 export function buildWhatsAppMessage(data: CheckoutData): string {
+  // Lógica del regalo sobrante que arreglamos antes
+  const totalUnits = data.items.reduce((acc, item) => acc + item.quantity, 0);
+  const hasSurpriseGift = (totalUnits % 5) >= 3;
+
   const bonifiedIds = new Set(
     data.comboTier === 'tier2'
       ? data.combos.map((combo) => combo.bonifiedItemCartId)
@@ -23,38 +27,37 @@ export function buildWhatsAppMessage(data: CheckoutData): string {
   const lines = data.items.map((item) => {
     const size = item.selectedSize ? ` (${item.selectedSize.label})` : '';
     const isBonified = bonifiedIds.has(item.cartItemId);
-    const bonifiedTag = isBonified ? ' 🎁 *BONIFICADO*' : '';
+    
+    // Si está bonificado, tachamos el precio real y ponemos GRATIS en negrita
     const lineTotal = isBonified
-      ? '$0,00'
-      : formatCurrency(item.unitPrice * item.quantity);
+      ? `~${formatCurrency(item.unitPrice * item.quantity)}~ *¡GRATIS!*`
+      : `*${formatCurrency(item.unitPrice * item.quantity)}*`;
 
-    return `• ${item.quantity}x ${item.brandName} - ${item.productName}${size}${bonifiedTag} → ${lineTotal}`;
+    return `▪️ ${item.quantity}x ${item.brandName} - ${item.productName}${size}\n   ↳ ${lineTotal}`;
   });
 
   const summaryLines: string[] = [];
+  summaryLines.push(`Subtotal: ${formatCurrency(data.subtotal)}`);
+  
   if (data.comboTier === 'tier2' && data.totalSavings > 0) {
-    summaryLines.push(
-      `💸 *Descuento aplicado: -${formatCurrency(data.totalSavings)}*`
-    );
+    summaryLines.push(`Descuentos: -${formatCurrency(data.totalSavings)}`);
   }
-  summaryLines.push(`💰 *Total a pagar: ${formatCurrency(data.total)}*`);
+  summaryLines.push(`*TOTAL A PAGAR: ${formatCurrency(data.total)}*`);
 
-  const giftLine =
-    data.comboTier === 'tier1' || data.comboTier === 'tier2'
-      ? '🎁 Incluye 1 Decant Sorpresa de Regalo'
-      : null;
+  const giftLine = hasSurpriseGift
+    ? '✨ *¡ATENCIÓN! Este pedido incluye 1 Decant Sorpresa de Regalo* ✨'
+    : null;
 
   const message = [
-    '🛍️ *Nuevo Pedido*',
-    '',
-    ...(data.customerName ? [`👤 Cliente: ${data.customerName}`] : []),
-    '',
-    '📦 *Detalle del pedido:*',
+    '*NUEVO PEDIDO - FD FRAGANCES* 🖤',
+    '-----------------------------------',
+    ...(data.customerName ? [`*Cliente:* ${data.customerName}`, ''] : []),
+    '*Detalle de la compra:*',
     ...lines,
-    '',
+    '-----------------------------------',
     ...summaryLines,
     ...(giftLine ? ['', giftLine] : []),
-    ...(data.customerNotes ? ['', `📝 Notas: ${data.customerNotes}`] : []),
+    ...(data.customerNotes ? ['', `_Notas del cliente: ${data.customerNotes}_`] : []),
   ].join('\n');
 
   return message.trim();

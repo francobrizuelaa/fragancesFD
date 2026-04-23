@@ -57,7 +57,7 @@ export function BrandsMarquee() {
       <div className="flex justify-center">
         {/* ACORDATE DE CAMBIAR EL NÚMERO DE TELÉFONO EN EL HREF */}
         <Link
-          href="https://wa.me/1176661815" 
+          href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=Hola%2C%20quiero%20ver%20el%20cat%C3%A1logo%20completo.`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[#25D366] px-8 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white shadow-[0_10px_30px_-10px_rgba(37,211,102,0.6)] transition hover:bg-[#1ebd5a] hover:scale-105"

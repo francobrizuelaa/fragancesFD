@@ -56,9 +56,9 @@ function formatCurrency(amount: number): string {
 }
 
 const FD_TIPS = [
-  'Escribinos en este chat si preferís retiro o envío y acordamos detalle.',
-  'Para pedidos grandes, confirmá stock antes de abonar (así vamos a tono).',
-  'Podés mandarnos comprobante y dirección en el mismo hilo; respondemos con horarios.',
+  'Escribinos como te gustaria recibir el pedido',
+  'Para pedidos grandes, confirmá stock antes de abonar.',
+  'Contamos con un stock de +2000 perfumes. Si te gustaria probar alguna fragancia que no ves en la pagina, hacemelo saber',
 ] as const;
 
 export function buildWhatsAppMessage(data: CheckoutData): string {

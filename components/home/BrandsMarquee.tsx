@@ -51,7 +51,7 @@ export function BrandsMarquee() {
 
       {/* Textos y Botón */}
       <p className="mt-8 mb-6 text-xl md:text-2xl font-extrabold text-center text-primary tracking-tight">
-        Más de 2000 perfumes en frascos con los que trabajamos. Buscá tu marca y consultanos disponibilidad.
+      ¿No encontras el perfume que te gusta? No pasa nada, escribinos al whatsapp que contamos con un catalogo de +2000 perfumes
       </p>
 
       <div className="flex justify-center">

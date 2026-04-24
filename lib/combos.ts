@@ -1,9 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { CartItem, ComboGroup, ComboTier } from '@/types/cart';
 
-const TIER1_MIN = 3;
-const TIER2_MIN = 5;
-const GROUP_SIZE = 5;
+// --- ACÁ ESTÁ EL CAMBIO ---
+const TIER1_MIN = 3; // A partir de 3: Decant de regalo
+const TIER2_MIN = 6; // A partir de 6: Se activa el Tier 2 (Decant + 1 Gratis)
+const GROUP_SIZE = 6; // Cada cuántos perfumes regalás 1 (Llevás 6, pagás 5)
+// --------------------------
 
 export function getComboTier(items: CartItem[]): ComboTier {
   const totalUnits = items.reduce((acc, item) => acc + item.quantity, 0);

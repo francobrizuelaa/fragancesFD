@@ -63,21 +63,40 @@ const FD_TIPS = [
 
 export function buildWhatsAppMessage(data: CheckoutData): string {
   const totalUnits = data.items.reduce((acc, item) => acc + item.quantity, 0);
-  const hasSurpriseGift = totalUnits % 5 >= 3;
+  
+  // Promoción actualizada: Decant gratis desde las 3 unidades
+  const hasSurpriseGift = totalUnits >= 3;
 
-  const bonifiedIds = new Set(
-    data.comboTier === 'tier2'
-      ? data.combos.map((combo) => combo.bonifiedItemCartId)
-      : []
-  );
+  // NUEVA LÓGICA: Contamos CUÁNTOS perfumes de cada ID nos regalaron
+  const bonifiedCounts: Record<string, number> = {};
+  if (data.comboTier === 'tier2') {
+    data.combos.forEach((combo) => {
+      bonifiedCounts[combo.bonifiedItemCartId] = 
+        (bonifiedCounts[combo.bonifiedItemCartId] || 0) + 1;
+    });
+  }
 
   const lines = data.items.map((item, i) => {
     const n = i + 1;
     const size = item.selectedSize ? ` (${item.selectedSize.label})` : '';
-    const isBonified = bonifiedIds.has(item.cartItemId);
-    const lineTotal = isBonified
-      ? `~${formatCurrency(item.unitPrice * item.quantity)}~  *GRATIS (bonificado)*`
-      : `*${formatCurrency(item.unitPrice * item.quantity)}*`;
+    
+    // Vemos cuántos de este renglón son gratis
+    const bonifiedQty = bonifiedCounts[item.cartItemId] || 0;
+    const totalPrice = item.unitPrice * item.quantity;
+    
+    let lineTotal = '';
+
+    if (bonifiedQty === 0) {
+      // CASO 1: Ninguno es gratis, se paga el total normal
+      lineTotal = `*${formatCurrency(totalPrice)}*`;
+    } else if (bonifiedQty === item.quantity) {
+      // CASO 2: Llevó 1 y justo es el gratis (se tacha todo el precio)
+      lineTotal = `~${formatCurrency(totalPrice)}~  *GRATIS (bonificado)*`;
+    } else {
+      // CASO 3: Llevó 8, pero solo 1 o 2 son gratis (muestra precio normal y avisa cuántos bonificó)
+      lineTotal = `*${formatCurrency(totalPrice)}* _(${bonifiedQty} bonificado${bonifiedQty > 1 ? 's' : ''})_`;
+    }
+
     return [
       `(${n})  ${item.quantity}x  ${item.brandName}  -  ${item.productName}${size}`,
       `     Total línea:  ${lineTotal}`,
@@ -87,20 +106,21 @@ export function buildWhatsAppMessage(data: CheckoutData): string {
   const summary: string[] = [
     `Subtotal:   ${formatCurrency(data.subtotal)}`,
   ];
+  
   if (data.comboTier === 'tier2' && data.totalSavings > 0) {
     summary.push(`Ahorro combo:  -${formatCurrency(data.totalSavings)}`);
   }
   summary.push(`*TOTAL A PAGAR:  ${formatCurrency(data.total)}*`);
 
   const giftLine = hasSurpriseGift
-    ? `*PROMO ACTIVA:*  Este pedido incluye 1 decant sorpresa de regalo.`
+    ? `*PROMO ACTIVA:* Este pedido incluye 1 decant sorpresa de regalo.`
     : null;
 
   const message = [
     `*NUEVO PEDIDO  |  FD FRAGANCES*`,
     `${RULE_HEAVY}`,
     ...(data.customerName
-      ? ['', `*Cliente:*  ${data.customerName}`]
+      ? ['', `*Cliente:* ${data.customerName}`]
       : []),
     '',
     `*Detalle*`,

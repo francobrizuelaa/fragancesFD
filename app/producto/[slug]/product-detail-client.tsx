@@ -7,6 +7,7 @@ import type {
   ProductSizeOption,
 } from '@/components/catalog/ProductCard';
 import { useCart } from '@/hooks/useCart';
+import { buildProductConsultWhatsAppURL } from '@/lib/whatsapp';
 
 function formatPrice(amount: number): string {
   return new Intl.NumberFormat('es-AR', {
@@ -44,6 +45,11 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
   const galleryImages =
     product.images.length > 0 ? product.images : ['/decant-1.png'];
 
+  const consultWhatsAppUrl = useMemo(
+    () => buildProductConsultWhatsAppURL(product.brand, product.name),
+    [product.brand, product.name]
+  );
+
   const handleAdd = () => {
     if (!selected) return;
     addItem({
@@ -65,10 +71,10 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10">
-      <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
+    <div className="mx-auto max-w-7xl px-4 pb-32 pt-6 md:pb-10 md:pt-10">
+      <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
         <div>
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100 md:rounded-3xl">
             <div className="relative aspect-[4/5] w-full">
               <Image
                 src={galleryImages[activeImage] ?? galleryImages[0]}
@@ -81,13 +87,13 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
             </div>
           </div>
           {galleryImages.length > 1 && (
-            <div className="mt-4 grid grid-cols-4 gap-3 sm:grid-cols-5">
+            <div className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-5 sm:gap-3">
               {galleryImages.map((img, i) => (
                 <button
                   key={`${img}-${i}`}
                   type="button"
                   onClick={() => setActiveImage(i)}
-                  className={`relative aspect-square overflow-hidden rounded-xl border transition-all ${
+                  className={`relative aspect-square min-h-12 overflow-hidden rounded-xl border transition-all ${
                     activeImage === i
                       ? 'border-accent-wine ring-2 ring-accent-wine/30'
                       : 'border-zinc-200 hover:border-zinc-300'
@@ -111,7 +117,7 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-zinc-500">
             {product.brand}
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-primary sm:text-3xl md:text-4xl">
             {product.name}
           </h1>
 
@@ -120,10 +126,10 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
           </p>
 
           <p className="mt-3 text-sm font-semibold text-red-600">
-          Llevando 3 decants, Recibís 1 decant sorpresa de regalo
+            Llevando 3 decants, recibís 1 decant sorpresa de regalo.
           </p>
-          <p className="mt-3 text-sm font-semibold text-red-600">
-          Llevando 6 o más, Pagás 5 y te llevás 1 decant gratis.
+          <p className="mt-2 text-sm font-semibold text-red-600">
+            Llevando 6 o más, pagás 5 y te llevás 1 decant gratis.
           </p>
 
           <div className="mt-8">
@@ -138,7 +144,7 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
                     key={s.id}
                     type="button"
                     onClick={() => setSelected(s)}
-                    className={`min-w-[4.5rem] rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors ${
+                    className={`min-h-12 min-w-[4.5rem] rounded-2xl border px-4 text-sm font-medium transition-colors ${
                       active
                         ? 'border-primary bg-primary text-white'
                         : 'border-zinc-200 bg-white text-primary hover:border-zinc-400'
@@ -155,10 +161,10 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
             <p className="text-xs font-medium uppercase tracking-[0.14em] text-zinc-500">
               Cantidad
             </p>
-            <div className="mt-3 inline-flex items-center rounded-xl border border-zinc-200 bg-white">
+            <div className="mt-3 inline-flex items-center rounded-2xl border border-zinc-200 bg-white">
               <button
                 type="button"
-                className="px-4 py-2.5 text-lg leading-none text-primary hover:bg-zinc-50"
+                className="flex min-h-12 min-w-12 items-center justify-center text-lg leading-none text-primary hover:bg-zinc-50"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
                 aria-label="Menos"
               >
@@ -169,7 +175,7 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
               </span>
               <button
                 type="button"
-                className="px-4 py-2.5 text-lg leading-none text-primary hover:bg-zinc-50"
+                className="flex min-h-12 min-w-12 items-center justify-center text-lg leading-none text-primary hover:bg-zinc-50"
                 onClick={() => setQty((q) => q + 1)}
                 aria-label="Más"
               >
@@ -182,10 +188,37 @@ export function ProductDetailClient({ product }: { product: ProductCardProduct }
             type="button"
             onClick={handleAdd}
             disabled={!selected}
-            className="mt-10 w-full rounded-2xl bg-[#111111] py-4 text-center text-base font-semibold tracking-wide text-white transition-all duration-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-10 hidden min-h-12 w-full rounded-2xl bg-[#111111] py-3 text-center text-base font-semibold tracking-wide text-white transition-all duration-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 md:block"
           >
             Agregar al carrito
           </button>
+        </div>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-[85] border-t border-zinc-200/90 bg-cream/95 px-3 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_32px_-12px_rgba(0,0,0,0.12)] backdrop-blur-xl supports-[backdrop-filter]:bg-cream/85 md:hidden">
+        <div className="mx-auto flex max-w-lg gap-2">
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={!selected}
+            className="min-h-12 flex-1 rounded-full bg-[#111111] px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-zinc-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Agregar al carrito
+          </button>
+          {consultWhatsAppUrl ? (
+            <a
+              href={consultWhatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-12 min-w-[7.5rem] flex-1 items-center justify-center rounded-full border-2 border-[#25D366] bg-[#25D366]/10 px-3 text-sm font-semibold text-[#075E54] transition hover:bg-[#25D366]/20"
+            >
+              WhatsApp
+            </a>
+          ) : (
+            <span className="flex min-h-12 flex-1 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 px-3 text-center text-xs text-zinc-500">
+              WhatsApp no configurado
+            </span>
+          )}
         </div>
       </div>
     </div>

@@ -31,12 +31,15 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-cream text-primary">
         <Navbar />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-[calc(4.75rem+env(safe-area-inset-bottom))] md:pb-0">
+          {children}
+        </main>
         <a
-          href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=Hola%2C%20quiero%20asesoramiento%20sobre%20perfumes.`}          target="_blank"
+          href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=Hola%2C%20quiero%20asesoramiento%20sobre%20perfumes.`}
+          target="_blank"
           rel="noopener noreferrer"
           aria-label="Contactar por WhatsApp"
-          className="fixed bottom-6 right-6 z-[80] inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_28px_-10px_rgba(0,0,0,0.5)] transition-transform hover:scale-110"
+          className="fixed bottom-6 right-6 z-[80] hidden h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_10px_28px_-10px_rgba(0,0,0,0.5)] transition-transform hover:scale-110 md:inline-flex"
         >
           <svg
             className="h-7 w-7"

@@ -3,11 +3,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Suspense, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { Suspense } from 'react';
+import { ChevronDown, Search } from 'lucide-react';
 import { CartSidebar } from '@/components/cart/CartSidebar';
 import { useCart } from '@/hooks/useCart';
 import { NavbarSearch } from '@/components/layout/NavbarSearch';
+import { MobileBottomNav } from '@/components/layout/MobileBottomNav';
 
 function NavLink({
   href,
@@ -39,8 +40,7 @@ function NavLink({
 
 export function Navbar() {
   const pathname = usePathname();
-  const [cartOpen, setCartOpen] = useState(false);
-  const { itemCount } = useCart();
+  const { itemCount, drawerOpen, openCartDrawer, closeCartDrawer } = useCart();
   const isHome = pathname === '/';
 
   return (
@@ -50,17 +50,16 @@ export function Navbar() {
           isHome ? 'fixed' : 'sticky'
         }`}
       >
-        <nav className="relative mx-auto grid h-20 w-full max-w-7xl grid-cols-[1fr_auto] items-center gap-4 px-4 lg:h-24">
-          <Link href="/" className="justify-self-start">
+        <nav className="relative mx-auto flex h-20 w-full max-w-7xl items-center justify-between gap-3 px-4 lg:h-24">
+          <Link href="/" className="shrink-0">
             <Image
-            src="/logo3.png"
-            alt="fragances FD"
-            width={170}
-            height={52}
-            priority
-            // Dejamos la altura fija (52px o h-12) y el ancho automático
-            className="h-[52px] w-auto object-contain"
-          />
+              src="/logo3.png"
+              alt="fragances FD"
+              width={170}
+              height={52}
+              priority
+              className="h-[48px] w-auto object-contain sm:h-[52px]"
+            />
             <span className="sr-only">fragances FD</span>
           </Link>
 
@@ -115,7 +114,7 @@ export function Navbar() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <Suspense
               fallback={
                 <div
@@ -127,10 +126,18 @@ export function Navbar() {
               <NavbarSearch />
             </Suspense>
 
+            <Link
+              href="/catalogo"
+              className="inline-flex h-12 w-12 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50/90 text-zinc-700 transition-colors hover:border-accent-wine/40 hover:bg-white hover:text-accent-wine md:hidden"
+              aria-label="Ir al catálogo para buscar"
+            >
+              <Search className="h-5 w-5" strokeWidth={2} aria-hidden />
+            </Link>
+
             <button
               type="button"
-              onClick={() => setCartOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-accent-wine px-4 py-2.5 text-base font-semibold text-accent-wine transition-colors hover:bg-accent-wine hover:text-white"
+              onClick={() => openCartDrawer()}
+              className="hidden min-h-12 items-center gap-2 rounded-full border border-accent-wine px-5 text-base font-semibold text-accent-wine transition-colors hover:bg-accent-wine hover:text-white md:inline-flex"
               aria-label="Abrir carrito"
             >
               <svg
@@ -158,24 +165,34 @@ export function Navbar() {
         </nav>
       </header>
 
-      {cartOpen && (
+      {drawerOpen && (
         <div
-          className="fixed inset-0 z-50 flex"
+          className="fixed inset-0 z-[100] flex flex-col justify-end md:flex-row md:justify-start"
           role="dialog"
           aria-modal="true"
           aria-label="Carrito"
         >
           <button
             type="button"
-            className="absolute inset-0 bg-black/55"
-            onClick={() => setCartOpen(false)}
+            className="absolute inset-0 bg-black/55 backdrop-blur-[2px]"
+            onClick={() => closeCartDrawer()}
             aria-label="Cerrar carrito"
           />
-          <div className="relative ml-auto flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
-            <CartSidebar onClose={() => setCartOpen(false)} />
+          <div
+            className="relative z-[101] flex max-h-[80vh] w-full flex-col overflow-hidden rounded-t-3xl border border-zinc-200/80 bg-white shadow-[0_-12px_48px_-8px_rgba(0,0,0,0.25)] md:ml-auto md:h-full md:max-h-none md:max-w-md md:rounded-none md:border-l md:border-t-0 md:shadow-2xl"
+          >
+            <div
+              className="mx-auto mt-3 h-1 w-10 shrink-0 rounded-full bg-zinc-300 md:hidden"
+              aria-hidden
+            />
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+              <CartSidebar onClose={() => closeCartDrawer()} />
+            </div>
           </div>
         </div>
       )}
+
+      <MobileBottomNav />
     </>
   );
 }

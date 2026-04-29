@@ -63,7 +63,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
+            className="flex min-h-12 min-w-12 items-center justify-center rounded-2xl text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900"
             aria-label="Cerrar carrito"
           >
             <svg
@@ -165,32 +165,34 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
                   </div>
 
                   <div className="mt-2 flex items-center justify-between gap-2">
-                    <div className="flex items-center rounded-lg border border-zinc-200 bg-white">
+                    <div className="flex items-center rounded-2xl border border-zinc-200 bg-white">
                       <button
                         type="button"
-                        className="px-2.5 py-1 text-sm hover:bg-zinc-100"
+                        className="flex min-h-12 min-w-12 items-center justify-center text-base hover:bg-zinc-100"
                         onClick={() =>
                           updateQuantity(item.cartItemId, item.quantity - 1)
                         }
+                        aria-label="Menos unidades"
                       >
                         −
                       </button>
-                      <span className="min-w-[2rem] text-center text-sm tabular-nums">
+                      <span className="min-w-[2.5rem] text-center text-sm font-semibold tabular-nums">
                         {item.quantity}
                       </span>
                       <button
                         type="button"
-                        className="px-2.5 py-1 text-sm hover:bg-zinc-100"
+                        className="flex min-h-12 min-w-12 items-center justify-center text-base hover:bg-zinc-100"
                         onClick={() =>
                           updateQuantity(item.cartItemId, item.quantity + 1)
                         }
+                        aria-label="Más unidades"
                       >
                         +
                       </button>
                     </div>
                     <button
                       type="button"
-                      className="text-xs font-medium text-accent-wine hover:underline"
+                      className="min-h-12 rounded-full px-3 text-xs font-semibold text-accent-wine hover:bg-accent-wine/10"
                       onClick={() => removeItem(item.cartItemId)}
                     >
                       Quitar
@@ -203,7 +205,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
         )}
       </div>
 
-      <div className="border-t border-zinc-200 bg-zinc-50/90 px-4 py-4">
+      <div className="border-t border-zinc-200 bg-zinc-50/95 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <dl className="space-y-1.5 text-sm">
           <div className="flex justify-between text-zinc-600">
             <dt>Subtotal</dt>
@@ -229,7 +231,7 @@ export function CartSidebar({ onClose }: CartSidebarProps) {
           href={checkoutUrl ?? undefined}
           target="_blank"
           rel="noopener noreferrer"
-          className={`mt-4 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold text-white transition-colors ${
+          className={`mt-4 flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl py-3 text-sm font-semibold text-white transition-colors ${
             checkoutUrl
               ? 'bg-accent-wine hover:bg-[#4d1822]'
               : 'cursor-not-allowed bg-zinc-400'

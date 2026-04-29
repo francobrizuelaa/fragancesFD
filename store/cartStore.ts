@@ -10,9 +10,14 @@ interface CartActions {
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
   _recompute: () => void;
+  openCartDrawer: () => void;
+  closeCartDrawer: () => void;
 }
 
-type CartStore = CartState & CartActions;
+type CartStore = CartState &
+  CartActions & {
+    drawerOpen: boolean;
+  };
 
 export const useCartStore = create<CartStore>()(
   persist(
@@ -24,6 +29,10 @@ export const useCartStore = create<CartStore>()(
       totalSavings: 0,
       total: 0,
       itemCount: 0,
+      drawerOpen: false,
+
+      openCartDrawer: () => set({ drawerOpen: true }),
+      closeCartDrawer: () => set({ drawerOpen: false }),
 
       addItem: (newItem) => {
         set((state) => {

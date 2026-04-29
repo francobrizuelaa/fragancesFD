@@ -156,7 +156,7 @@ export function CatalogoClient({
   };
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8">
+    <div className="mx-auto w-full max-w-7xl px-3 py-6 sm:px-4 sm:py-8">
       <div className="mb-8">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent-wine">
           
@@ -200,7 +200,7 @@ export function CatalogoClient({
               o ajustá los filtros.
             </p>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 xl:grid-cols-3">
               {filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} linkToProduct />
               ))}

@@ -148,3 +148,20 @@ export function buildWhatsAppURL(message: string): string {
   url.searchParams.set('text', safeMessage);
   return url.toString();
 }
+
+/** Enlace wa.me para consulta desde la ficha de un producto. */
+export function buildProductConsultWhatsAppURL(
+  brand: string,
+  productName: string
+): string | null {
+  const raw = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  if (!raw?.trim()) return null;
+  const number = sanitizeWaMeNumber(raw);
+  if (!number) return null;
+  const url = new URL(`https://wa.me/${number}`);
+  url.searchParams.set(
+    'text',
+    `Hola, consulto por el perfume: ${brand} - ${productName}`
+  );
+  return url.toString();
+}

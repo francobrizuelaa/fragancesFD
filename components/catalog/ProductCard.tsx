@@ -69,7 +69,7 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
         src={product.images[0] ?? '/decant-1.png'}
         alt={product.name}
         fill
-        sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
+        sizes="(max-width: 768px) 45vw, (max-width: 1280px) 33vw, 25vw"
         className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
       />
     </div>
@@ -77,10 +77,10 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
 
   const titleBlock = (
     <div className="min-h-0">
-      <p className="text-[9px] font-medium uppercase tracking-[0.14em] text-zinc-500">
+      <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-500 md:tracking-[0.14em]">
         {product.brand}
       </p>
-      <h3 className="mt-0.5 line-clamp-2 text-base font-semibold leading-snug text-primary">
+      <h3 className="mt-0.5 line-clamp-2 text-[13px] font-semibold leading-snug text-primary sm:text-sm md:text-base">
         {product.name}
       </h3>
     </div>
@@ -99,7 +99,7 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
         imageBlock
       )}
 
-      <div className="flex min-h-0 flex-1 flex-col gap-3 p-3.5 pt-3">
+      <div className="flex min-h-0 flex-1 flex-col gap-2 p-2.5 pt-2 sm:gap-3 sm:p-3.5 sm:pt-3">
         {linkToProduct ? (
           <Link
             href={productHref}
@@ -111,11 +111,11 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
           titleBlock
         )}
 
-        <div className="min-h-0 flex-1 space-y-1.5">
-          <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-500">
+        <div className="min-h-0 flex-1 space-y-1 sm:space-y-1.5">
+          <p className="text-[8px] font-medium uppercase tracking-[0.1em] text-zinc-500 sm:text-[9px] sm:tracking-[0.12em]">
             Formato
           </p>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1 sm:gap-1.5">
             {product.sizes.map((size) => {
               const active = size.id === selected?.id;
               return (
@@ -123,14 +123,14 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
                   key={size.id}
                   type="button"
                   onClick={() => setSelectedId(size.id)}
-                  className={`flex w-full items-center justify-between rounded-xl border px-2.5 py-2 text-left text-xs transition-colors ${
+                  className={`flex min-h-11 w-full items-center justify-between rounded-xl border px-2 py-2 text-left text-[11px] transition-colors sm:min-h-0 sm:px-2.5 sm:text-xs ${
                     active
                       ? 'border-accent-wine bg-accent-wine text-white'
                       : 'border-zinc-200 bg-zinc-50/70 hover:border-accent-wine/40'
                   }`}
                 >
-                  <span className="font-medium">{size.label}</span>
-                  <span className={`tabular-nums ${active ? '' : 'text-zinc-700'}`}>
+                  <span className="font-medium leading-tight">{size.label}</span>
+                  <span className={`shrink-0 tabular-nums ${active ? '' : 'text-zinc-700'}`}>
                     {formatPrice(size.price)}
                   </span>
                 </button>
@@ -142,7 +142,7 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
         {linkToProduct && (
           <Link
             href={productHref}
-            className="mt-auto flex w-full items-center justify-center rounded-xl border border-zinc-300 bg-white py-2.5 text-center text-xs font-semibold tracking-wide text-primary transition-colors hover:border-accent-wine hover:text-accent-wine"
+            className="mt-auto flex min-h-12 w-full items-center justify-center rounded-2xl border border-zinc-300 bg-white py-2 text-center text-[11px] font-semibold tracking-wide text-primary transition-colors hover:border-accent-wine hover:text-accent-wine sm:text-xs"
           >
             Ver producto
           </Link>
@@ -151,7 +151,7 @@ export function ProductCard({ product, linkToProduct }: ProductCardProps) {
           type="button"
           onClick={handleAdd}
           disabled={!selected}
-          className="w-full rounded-xl border border-accent-wine bg-accent-wine py-2.5 text-xs font-semibold tracking-wide text-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-px hover:border-[#4d1822] hover:bg-[#4d1822] hover:shadow-md active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-sm"
+          className="w-full min-h-12 rounded-2xl border border-accent-wine bg-accent-wine py-2.5 text-[11px] font-semibold tracking-wide text-white shadow-sm transition-all duration-300 ease-out hover:border-[#4d1822] hover:bg-[#4d1822] hover:shadow-md active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 sm:text-xs"
         >
           Agregar al carrito
         </button>

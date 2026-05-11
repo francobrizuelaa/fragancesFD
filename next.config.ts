@@ -18,6 +18,7 @@ function supabaseImageRemotePattern():
 
 const nextConfig: NextConfig = {
   images: {
+    unoptimized: true, //  SALTEAR EL LÍMITE DE VERCEL
     remotePatterns: [supabaseImageRemotePattern()].filter(
       (p): p is NonNullable<typeof p> => p != null
     ),
